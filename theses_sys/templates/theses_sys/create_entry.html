@@ -1,0 +1,9 @@
+<form action="{% url 'theses_sys:add_thesis' %}" method="post">
+	{% csrf_token %}
+	<div>
+		Title: <input type="text" name="title" />
+		Abstract: <textarea name="abstract"></textarea>
+		Date Published: <input type="datetime" name="pub_date" />
+		Date Accessioned: <input type="datetime" name="acc_date" />
+	</div>
+</form>

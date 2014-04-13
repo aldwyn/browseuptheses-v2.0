@@ -1,9 +1,9 @@
-<a href="{% url 'theses_sys:add_thesis' %}">Add Thesis</a>
+<a href="{% url 'theses_sys:create_entry' %}">Add Thesis</a>
 
 {% if theses %}
 	<ul>
 	{% for thesis in theses %}
-		<li><a href="{% url 'theses_sys:detail' thesis.id %}">{{ thesis.title }}</a></li>
+		<li><a href="{% url 'theses_sys:thesis_info' thesis.id %}">{{ thesis.title }}</a></li>
 	{% endfor %}
 	</ul>
 {% else %}
