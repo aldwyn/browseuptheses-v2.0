@@ -55,10 +55,10 @@ class Thesis(models.Model):
 
 class Tags_Added(models.Model):
 	tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-	thesis = models.ForeignKey(Thesis)
+	thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
 	add_date = models.DateTimeField(auto_now_add=True)
 
 class Categories_Added(models.Model):
 	category = models.ForeignKey(Category, on_delete=models.CASCADE)
-	thesis = models.ForeignKey(Thesis)
+	thesis = models.ForeignKey(Thesis, on_delete=models.CASCADE)
 	add_date = models.DateTimeField(auto_now_add=True)
