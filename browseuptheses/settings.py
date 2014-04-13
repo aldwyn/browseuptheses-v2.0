@@ -59,7 +59,7 @@ WSGI_APPLICATION = 'browseuptheses.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'browseuptheses_py',
+        'NAME': 'browseuptheses_django',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
