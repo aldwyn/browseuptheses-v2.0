@@ -1,0 +1,11 @@
+<a href="{% url 'theses_sys:add_thesis' %}">Add Thesis</a>
+
+{% if theses %}
+	<ul>
+	{% for thesis in theses %}
+		<li><a href="{% url 'theses_sys:detail' thesis.id %}">{{ thesis.title }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No thesis are available.</p>
+{% endif %}
