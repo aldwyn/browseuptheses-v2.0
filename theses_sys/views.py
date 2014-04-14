@@ -60,15 +60,30 @@ def show_thesis_info(request, thesis_id):
 def create_entry(request):
 	return render(request, 'theses_sys/create_entry.html', {'category': Category.objects.all()})
 
+def show_set_profile(request):
+	user = User.objects.get(pk=2)
+	profile = FacultyProfile.objects.get(user_auth=user)
+	departments = Department.objects.all()
+	return render(request, 'theses_sys/set_profile.html', {'user': user, 'profile': profile, 'departments': departments})
+
+def set_profile(request):
+	first_name = request.POST['first_name']
+	middle_name = request.POST['middle_name']
+	last_name = request.POST['last_name']
+	username = request.POST['username']
+	password = request.POST['password']
+	confirm_password = request.POST['confirm_password']
+	department = request.POST['department']
+	gender = request.POST['gender']
+
 def add_thesis(request):
-	thesis = {}
-	thesis['title'] = request.POST['title']
-	thesis['abstract'] = request.POST['abstract']
-	thesis['faculty'] = request.session
-	thesis['tags'] = request.POST['tags'].split(',')
-	thesis['category'] = request.POST['category']
-	thesis['pub_date'] = request.POST['pub_date']
-	thesis['pub_date'] = request.POST['acc_date']
+	title = request.POST['title']
+	abstract = request.POST['abstract']
+	faculty = request.session
+	tags = request.POST['tags'].split(',')
+	category = request.POST['category']
+	pub_date = request.POST['pub_date']
+	acc_date = request.POST['acc_date']
 
 	# thesis['researchers'] = request.POST['researchers']
 
