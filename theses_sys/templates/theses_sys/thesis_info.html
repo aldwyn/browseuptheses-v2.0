@@ -18,13 +18,13 @@
 		<tr>
 			<th>Faculty</th>
 			<td>
-				<a href="">{{ thesis.faculty }}</a>
+				<a href="{% url 'theses_sys:show_faculty_theses' thesis.faculty.user_auth.id %}">{{ thesis.faculty }}</a>
 			</td>
 		</tr>
 		<tr>
 			<th>Department</th>
 			<td>
-				<a href="{% url 'theses_sys:department_theses' thesis.faculty.department.name %}">
+				<a href="{% url 'theses_sys:show_department_theses' thesis.faculty.department.id %}">
 					{{ thesis.faculty.department }}
 				</a>
 			</td>
@@ -33,7 +33,7 @@
 			<th>Tags</th>
 			<td>
 			{% for tag in thesis.tags.all %}
-				<a href="">{{ tag }}</a>
+				<a href="{% url 'theses_sys:search' 'tag' tag.name %}">{{ tag }}</a>
 			{% endfor %}
 			</td>
 		</tr>
@@ -41,7 +41,7 @@
 			<th>Categories</th>
 			<td>
 			{% for category in thesis.categories.all %}
-				<a href="">{{ category }}</a>
+				<a href="{% url 'theses_sys:search' 'category' category.name %}">{{ category }}</a>
 			{% endfor %}
 			</td>
 		</tr>

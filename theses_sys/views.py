@@ -21,13 +21,28 @@ def show_session_theses(request):
 	theses = Thesis.objects.all().order_by('title')
 	return render(request, 'theses_sys/index.html', {'theses': theses})
 
-def show_faculty_theses(request):
-	theses = Thesis.objects.all().order_by('title')
-	return render(request, 'theses_sys/index.html', {'theses': theses})
+def show_faculty_theses(request, faculty_id):
+	theses = Thesis.objects.filter(faculty__user_auth__id=faculty_id)
+	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses})
 
-def show_department_theses(request, department):
-	theses = Thesis.objects.all().order_by('title')
-	return render(request, 'theses_sys/index.html', {'theses': theses})
+def show_department_theses(request, department_id):
+	theses = Thesis.objects.filter(faculty__department__id=department_id)
+	return render(request, 'theses_sys/department_theses.html', {'theses': theses})
+
+def search(request, filter, query):
+	if filter is 'tag':
+		theses = Thesis.objects.filter(tags__name__contains=query)
+	elif filter is 'category':
+		theses = Thesis.objects.filter(categories__name__contains=query)
+	elif filter is 'department':
+		theses = Thesis.objects.filter(faculty__department__name__contains=query)
+	elif filter is 'researcher':
+		theses = Thesis.objects.filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query)
+	elif filter is 'faculty':
+		theses = Thesis.objects.filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
+	else:
+		theses = Thesis.objects.filter(tags__name__contains=query).filter(categories__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
+	return render(request, 'theses_sys/search.html', {'theses': theses})
 
 def show_thesis_info(request, thesis_id):
 	thesis = get_object_or_404(Thesis, pk=thesis_id)

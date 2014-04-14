@@ -4,7 +4,7 @@
 {% if theses %}
 	<ul>
 	{% for thesis in theses %}
-		<li><a href="{% url 'theses_sys:thesis_info' thesis.id %}">{{ thesis.title }}</a></li>
+		<li><a href="{% url 'theses_sys:show_thesis_info' thesis.id %}">{{ thesis.title }}</a></li>
 	{% endfor %}
 	</ul>
 {% else %}
