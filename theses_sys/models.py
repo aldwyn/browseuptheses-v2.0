@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 
 class Researcher(models.Model):
 	first_name = models.CharField(max_length=255)
@@ -15,12 +14,22 @@ class Department(models.Model):
 	def __unicode__(self):
 		return self.name
 
+class FacultySession(models.Model):
+	username = models.CharField(max_length=255)
+	password = models.CharField(max_length=255)
+	date_joined = models.DateTimeField(auto_now_add=True)
+	date_last_login = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return self.username
+
 class FacultyProfile(models.Model):
-	user_auth = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE)
+	user_auth = models.ForeignKey(FacultySession, primary_key=True, on_delete=models.CASCADE)
 	first_name = models.CharField(max_length=255)
 	middle_name = models.CharField(max_length=255)
 	last_name = models.CharField(max_length=255)
 	department = models.ForeignKey(Department)
+	email = models.EmailField()
+	contact_number = models.CharField(max_length=255)
 	def __unicode__(self):
 		return self.last_name + ', ' + self.first_name + ' ' + self.middle_name[0] + '.'
 
