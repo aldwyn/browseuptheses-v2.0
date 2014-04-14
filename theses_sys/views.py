@@ -70,7 +70,7 @@ def show_thesis_info(request, thesis_id):
 	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis, 'session': session})
 
 def create_entry(request):
-	return render(request, 'theses_sys/create_entry.html', {'category': Category.objects.all()})
+	return render(request, 'theses_sys/create_entry.html', {'categories': Category.objects.all()})
 
 def show_set_profile(request):
 	session = FacultySession.objects.get(pk=request.session['f_id'])
@@ -106,35 +106,35 @@ def update_profile(request):
 def add_thesis(request):
 	title = request.POST['title']
 	abstract = request.POST['abstract']
-	faculty = request.session['']
+	researchers = request.POST['researcher']
+	faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
 	tags = request.POST['tags'].split(',')
 	category = request.POST['category']
 	pub_date = request.POST['pub_date']
 	acc_date = request.POST['acc_date']
 
-	# thesis['researchers'] = request.POST['researchers']
+	res_list = []
+	for researcher in researchers:
+		new_researcher = Researcher(
+				first_name = researcher['first_name'],
+				middle_name = researcher['middle_name'],
+				last_name = researcher['last_name']
+			)
+		new_researcher.save()
+		res_list.append(new_researcher)
 
-	# res_list = []
-	# for researcher in researchers:
-	# 	new_researcher = Researcher(
-	# 			first_name = researcher.first_name,
-	# 			middle_name = researcher.middle_name,
-	# 			last_name = researcher.last_name
-	# 		)
-	# 	new_researcher.save()
-	# 	res_list.append(new_researcher.id)
+	tag_list = []
+	for tag in tags:
+		new_tag = Tag(name=tag.strip())
+		new_tag.save()
+		tag_list.append(new_tag)
 
-	# tag_list = []
-	# for tag in tags:
-	# 	new_tag = Tag(name=tag.name)
-	# 	new_tag.save()
-	# 	tag_list.append(new_tag.id)
+	cat_list = []
+	for category in categories:
+		new_category = Category(name=category.strip())
+		new_category.save()
+		cat_list.append(new_category)
 
-	# cat_list = []
-	# for category in categories:
-	# 	new_category = Category(name=category.name)
-	# 	new_category.save()
-	# 	cat_list.append(new_category.id)
-
-	# new_theses = Thesis(title=title, abstract=abstract, )
-	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis})
+	new_theses = Thesis(title=title, abstract=abstract, researchers=res_list, faculty=faculty, tags=tag_list, categories=cat_list, pub_date=pub_date, acc_date=acc_date)
+	new_theses.save()
+	return render(request, 'theses_sys/thesis_info.html', {'thesis': new_theses})
