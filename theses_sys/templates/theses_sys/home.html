@@ -1,6 +1,4 @@
-{% include 'theses_sys/fronts/meta.html' %}
-{% include 'theses_sys/fronts/header.html' %}
-{% include 'theses_sys/fronts/querybox.html' %}
+{% include 'theses_sys/querybox.html' %}
 
 <a href="{% url 'theses_sys:show_login' %}">Log in</a>
 <a href="{% url 'theses_sys:create_entry' %}">Add Thesis</a>
@@ -14,6 +12,3 @@
 {% else %}
 	<p>No thesis are available.</p>
 {% endif %}
-
-{% include 'theses_sys/fronts/scripts.html' %}
-{% include 'theses_sys/fronts/footer.html' %}

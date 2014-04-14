@@ -1,0 +1,102 @@
+@font-face {
+    font-family: 'Magistral C';
+    src: url('fonts/magistral_C.ttf');
+}
+
+@font-face {
+    font-family: 'Segoe UI Semilight';
+    src: url('fonts/segoeuisl.ttf');
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+	margin: 0 auto;
+	font-family: 'Segoe UI Semilight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.alert-box {
+    text-align: center;
+}
+
+#main-wrapper {
+    min-height: 100%;
+    padding-bottom: 87px;
+}
+
+footer {
+    margin-top: -87px;
+}
+
+#wrap {
+	max-width: 980px;
+    margin: 30px auto;
+    position: relative;
+}
+
+.main {
+    margin: 20px 0;
+}
+
+.row {
+	margin-left: 0;
+}
+
+.content {
+    width: 100%;
+}
+
+fieldset {
+    padding: 30px;
+
+}
+
+header, footer {
+    background-color: #420E0E;
+    -webkit-box-shadow: 0 0 10px #420E0E;
+    -moz-box-shadow: 0 0 10px #420E0E;
+    box-shadow: 0 0 10px #420E0E;
+}
+
+table thead tr th {
+    text-align: center;
+}
+
+tbody tr td:first-child {
+    font-weight: bold;
+    width: 20%;
+}
+
+#typeahead-data {
+    display: none;
+    position: absolute;
+    width: 100%;
+    z-index: 999;
+    background-color: #FFF;
+    top: 37px;
+    border: 1px solid #D8D8D8;
+}
+
+[id*='ta_data'] {
+    display: block;
+    padding: 4px 10px;
+    text-transform: none;
+    text-decoration: none;
+}
+
+[id*='ta_data']:hover {
+    background-color: #007095;
+    color: #fff;
+}
+
+#thesis_abstract {
+    -webkit-box-shadow: 0 0 10px #420E0E;
+    -moz-box-shadow: 0 0 10px #420E0E;
+    box-shadow: 0 0 10px #420E0E;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    font-family: 'Segoe UI Semilight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
