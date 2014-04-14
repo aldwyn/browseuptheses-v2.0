@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import signals
-from theses_sys.models import Thesis, FacultyProfile, Researcher, Department, Tag, Category
+from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category
 
 def index(request):
 	return render(request, 'theses_sys/index.html')
@@ -20,14 +19,13 @@ def show_login(request):
 def create_user_session(request):
 	username = request.POST['username']
 	password = request.POST['password']
-	user = FacultySession.objects.filter(username=username).filter(password=password)
+	user = FacultySession.objects.get(username=username, password=password)
 	if user:
 		request.session['f_id'] = user.id
 		profile = FacultyProfile.objects.filter(user_auth=user)
 		if not profile:
 			data = {
 				'session': user,
-				'profile': profile,
 				'departments': Department.objects.all(),
 				'alert': 'Set your profile first.'
 			}
@@ -80,15 +78,30 @@ def show_set_profile(request):
 	departments = Department.objects.all()
 	return render(request, 'theses_sys/set_profile.html', {'session': session, 'profile': profile, 'departments': departments})
 
-def set_profile(request):
-	first_name = request.POST['first_name']
-	middle_name = request.POST['middle_name']
-	last_name = request.POST['last_name']
-	username = request.POST['username']
+def update_profile(request):
 	password = request.POST['password']
 	confirm_password = request.POST['confirm_password']
-	department = request.POST['department']
-	gender = request.POST['gender']
+	if password == confirm_password:
+		user_auth = FacultySession.objects.get(pk=request.session['f_id'])
+		department = Department.objects.get(pk=request.POST['department'])
+		first_name = request.POST['first_name']
+		middle_name = request.POST['middle_name']
+		last_name = request.POST['last_name']
+		username = request.POST['username']
+		gender = request.POST['gender']
+		new_profile = FacultyProfile(user_auth=user_auth, first_name=first_name, middle_name=middle_name, last_name=last_name, gender=gender, department=department)
+		new_profile.save()
+		user_auth.username = username
+		user_auth.password = password
+		user_auth.save()
+		return render(request, 'theses_sys/home.html', {'theses': Thesis.objects.all()})
+	else:
+		data = {
+			'session': FacultySession.objects.get(pk=request.session['f_id']),
+			'departments': Department.objects.all(),
+			'alert': 'Passwords mismatched.'
+		}
+		return render(request, 'theses_sys/set_profile.html', data)
 
 def add_thesis(request):
 	title = request.POST['title']

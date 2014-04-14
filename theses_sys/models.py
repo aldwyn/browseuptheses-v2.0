@@ -27,6 +27,7 @@ class FacultyProfile(models.Model):
 	first_name = models.CharField(max_length=255)
 	middle_name = models.CharField(max_length=255)
 	last_name = models.CharField(max_length=255)
+	gender = models.CharField(max_length=1)
 	department = models.ForeignKey(Department)
 	email = models.EmailField()
 	contact_number = models.CharField(max_length=255)
