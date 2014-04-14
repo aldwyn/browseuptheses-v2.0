@@ -50,6 +50,7 @@ class Thesis(models.Model):
 	faculty = models.ForeignKey(FacultyProfile, on_delete=models.CASCADE)
 	tags = models.ManyToManyField(Tag, through='Tags_Added')
 	categories = models.ManyToManyField(Category, through='Categories_Added')
+	date_last_modified = models.DateTimeField(auto_now=True)
 	add_date = models.DateTimeField(auto_now_add=True)
 	pub_date = models.DateTimeField()
 	acc_date = models.DateTimeField()
