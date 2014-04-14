@@ -1,5 +1,6 @@
 <h3>{{ thesis.title }}</h3>
 <fieldset>
+	<pre>{{ session }}</pre>
 	<legend>Thesis Information</legend>
 	<table>
 		<tr>
@@ -8,7 +9,49 @@
 		</tr>
 		<tr>
 			<th>Researchers</th>
-			<td>{{ thesis.researchers }}</td>
+			<td>
+			{% for researcher in thesis.researchers.all %}
+				<a href="">{{ researcher }}</a>
+			{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Faculty</th>
+			<td>
+				<a href="">{{ thesis.faculty }}</a>
+			</td>
+		</tr>
+		<tr>
+			<th>Department</th>
+			<td>
+				<a href="{% url 'theses_sys:department_theses' thesis.faculty.department.name %}">
+					{{ thesis.faculty.department }}
+				</a>
+			</td>
+		</tr>
+		<tr>
+			<th>Tags</th>
+			<td>
+			{% for tag in thesis.tags.all %}
+				<a href="">{{ tag }}</a>
+			{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Categories</th>
+			<td>
+			{% for category in thesis.categories.all %}
+				<a href="">{{ category }}</a>
+			{% endfor %}
+			</td>
+		</tr>
+		<tr>
+			<th>Date Published</th>
+			<td>{{ thesis.pub_date }}</td>
+		</tr>
+		<tr>
+			<th>Date Accessioned</th>
+			<td>{{ thesis.acc_date }}</td>
 		</tr>
 	</table>
 </fieldset>

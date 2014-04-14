@@ -2,8 +2,36 @@
 	{% csrf_token %}
 	<div>
 		Title: <input type="text" name="title" />
-		Abstract: <textarea name="abstract"></textarea>
-		Date Published: <input type="datetime" name="pub_date" />
-		Date Accessioned: <input type="datetime" name="acc_date" />
 	</div>
+	<div>
+		Abstract: <textarea name="abstract"></textarea>
+	</div>
+	<!-- <div>
+		Researcher:
+		<input type="text" placeholder="F" name="researchers[0][first_name]" />
+		<input type="text" placeholder="M" name="researchers[0][middle_name]" />
+		<input type="text" placeholder="L" name="researchers[0][last_name]" />
+	</div>
+	<div>
+		Researcher:
+		<input type="text" placeholder="F" name="researchers[1][first_name]" />
+		<input type="text" placeholder="M" name="researchers[1][middle_name]" />
+		<input type="text" placeholder="L" name="researchers[1][last_name]" />
+	</div> -->
+	<div>
+		Tags: <input type="text" name="tags" />
+	</div>
+	<div>
+		Categories:
+		{% for category in categories %}
+			<input type="radio" name="category" />{{ category.name }}
+		{% endfor %}
+	</div>
+	<div>
+		Date Published: <input type="date" name="pub_date" />
+	</div>
+	<div>
+		Date Accessioned: <input type="date" name="acc_date" />
+	</div>
+	<input type="submit" />
 </form>
