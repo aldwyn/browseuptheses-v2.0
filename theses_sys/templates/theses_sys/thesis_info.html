@@ -1,61 +1,107 @@
-<h3>{{ thesis.title }}</h3>
-<fieldset>
-	<pre>{{ session }}</pre>
-	<legend>Thesis Information</legend>
-	<table>
-		<tr>
-			<th>Title</th>
-			<td>{{ thesis.title }}</td>
-		</tr>
-		<tr>
-			<th>Researchers</th>
-			<td>
-			{% for researcher in thesis.researchers.all %}
-				<a href="">{{ researcher }}</a>
-			{% endfor %}
-			</td>
-		</tr>
-		<tr>
-			<th>Faculty</th>
-			<td>
-				<a href="{% url 'theses_sys:show_faculty_theses' thesis.faculty.user_auth.id %}">{{ thesis.faculty }}</a>
-			</td>
-		</tr>
-		<tr>
-			<th>Department</th>
-			<td>
-				<a href="{% url 'theses_sys:show_department_theses' thesis.faculty.department.id %}">
-					{{ thesis.faculty.department }}
-				</a>
-			</td>
-		</tr>
-		<tr>
-			<th>Tags</th>
-			<td>
-			{% for tag in thesis.tags.all %}
-				<a href="{% url 'theses_sys:search' 'tag' tag.name %}">{{ tag }}</a>
-			{% endfor %}
-			</td>
-		</tr>
-		<tr>
-			<th>Categories</th>
-			<td>
-			{% for category in thesis.categories.all %}
-				<a href="{% url 'theses_sys:search' 'category' category.name %}">{{ category }}</a>
-			{% endfor %}
-			</td>
-		</tr>
-		<tr>
-			<th>Date Published</th>
-			<td>{{ thesis.pub_date }}</td>
-		</tr>
-		<tr>
-			<th>Date Accessioned</th>
-			<td>{{ thesis.acc_date }}</td>
-		</tr>
-	</table>
-</fieldset>
-<fieldset>
-	<legend>Abstract</legend>
-	<p>{{ thesis.abstract }}</p>
-</fieldset>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>{{ thesis.title }}</title>
+		{% include 'theses_sys/fronts/meta.html' %}
+		<style type="text/css">
+			fieldset {
+				margin: 20px;
+			}
+
+			.abs_parag {
+				text-indent: 3em;
+				font-size: 14px;
+				text-align: justify;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="main-wrapper">
+			{% include 'theses_sys/fronts/header.html' %}
+			
+			<div id="wrap">
+				<div id="main">
+					<div class="row">
+						<div class="browsed-infobits large-12 medium-12 small-12 columns">
+							<h3 style="color: #008CBA; font-weight: bolder;">{{ thesis.title }}</h3>
+							
+							{% include 'theses_sys/fronts/alert.html' %}
+
+							<fieldset>
+								<legend>
+									<h5>Thesis Information</h5>
+								</legend>
+								<table style="width: 100%">
+									<tbody>
+										<tr>
+											<th>Title</th>
+											<td>{{ thesis.title }}</td>
+										</tr>
+										<tr>
+											<th>Researcher(s)</th>
+											<td>
+											{% for researcher in thesis.researchers.all %}
+							    				<span class="label secondary">{{ researcher }}</span>
+							    			{% endfor %}
+											</td>
+										</tr>
+										<tr>
+											<th>Faculty</th>
+											<td>
+												<a href="{% url 'theses_sys:show_faculty_theses' thesis.faculty.user_auth.id %}">{{ thesis.faculty }}</a>
+											</td>
+										</tr>
+										<tr>
+											<th>Department</th>
+											<td>
+												<a href="{% url 'theses_sys:show_department_theses' thesis.faculty.department.id %}">{{ thesis.faculty.department }}</a>
+											</td>
+										</tr>
+										<tr>
+											<th>Tags</th>
+											<td>
+											{% for tag in thesis.tags.all %}
+												<a href="{% url 'theses_sys:search' 'tag' tag.name %}" class="label">{{ tag }}</a>
+											{% endfor %}
+											</td>
+										</tr>
+										<tr>
+											<th>Categories</th>
+											<td>
+											{% for category in thesis.categories.all %}
+												<a href="{% url 'theses_sys:search' 'category' category.name %}" class="label">{{ category }}</a>
+											{% endfor %}
+											</td>
+										</tr>
+										<tr>
+											<th>Date Published</th>
+											<td>{{ thesis.pub_date }}</td>
+										</tr>
+										<tr>
+											<th>Date Accessioned</th>
+											<td>{{ thesis.acc_date }}</td>
+										</tr>
+									</tbody>
+								</table>
+								<a href="#top">Back to top &raquo</a>
+							</fieldset>
+							<fieldset>
+								<legend>
+									<h5>Abstract</h5>
+								</legend>
+								<div>
+									<p class="abs_parag">{{ thesis.abstract | linebreaksbr }}</p>
+								</div>
+								<a href="#top">Back to top &raquo</a>
+							</fieldset>
+						</div>
+					</div>
+				</div>	
+			</div>
+		</div>
+		
+		{% include 'theses_sys/fronts/footer.html' %}
+		{% include 'theses_sys/fronts/scripts.html' %}
+	</body>
+</html>

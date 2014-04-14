@@ -1,9 +1,91 @@
-{% if theses %}
-	<ul>
-	{% for thesis in theses %}
-		<li><a href="{% url 'theses_sys:show_thesis_info' thesis.id %}">{{ thesis.title }}</a></li>
-	{% endfor %}
-	</ul>
-{% else %}
-	<p>No thesis are available.</p>
-{% endif %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Browse UP Theses | UP Cebu's Online Theses Archive</title>
+		{% include 'theses_sys/fronts/meta.html' %}
+	</head>
+
+	<body>
+		<div id="main-wrapper">
+			{% include 'theses_sys/fronts/header.html' %}
+
+			<div id="wrap">
+				<div id="main" style="margin: 20px 0">
+					<div class="row">
+						<div class="large-12 medium-10 small-10 columns">
+							<fieldset id = "profile">
+							    <legend><h4>My Profile</h4></legend>
+							    <div id="profileName">
+							    	<h5>{{ faculty }}</h5>
+							    </div>
+							  	
+							    {% include 'theses_sys/fronts/alert.html' %}
+
+							    <table style="width: 100%">
+						    		<thead>
+							    		<tr>
+							    			<th>Theses Title</th>
+							    			<th>Researcher/s</th>
+							    			<th>Category</th>
+							    			<th>Tags</th>
+							    			<th>Edit?</th>
+							    			<th>Delete?</th>
+							    		</tr>
+						    		</thead>
+						    		<tbody>
+						    			{% if theses %}
+											{% for thesis in theses %}
+												<tr>
+									    			<td><a href="{% url 'theses_sys:show_thesis_info' thesis.id %}">{{ thesis.title }}</a></td>
+									    			<td>
+									    			{% for researcher in thesis.researchers.all %}
+														<span class="label secondary">{{ researcher }}</span>
+													{% endfor %}
+													</td>
+									    			<td>
+									    			{% for category in thesis.categories.all %}
+														<a href="{% url 'theses_sys:search' 'category' category.name %}" class="label">{{ category }}</a>
+													{% endfor %}
+									    			</td>
+									    			<td>
+									    			{% for tag in thesis.tags.all %}
+														<a href="{% url 'theses_sys:search' 'tag' tag.name %}" class="label">{{ tag }}</a>
+													{% endfor %}
+									    			</td>
+									    			<td>
+									    				<a href="editEntry.php?id=<?= $thesis['thesis_id']; ?>">
+									    					<img id="edit" src="{% static 'theses_sys/images/edit-tiny.png' %}" alt="Edit">
+									    				</a>
+									    			</td>
+									    			<td>
+									    				<a href="#" data-reveal-id="myModal_{{ thesis.id }}" data-reveal>
+									    					<img id="delete" src="{% static 'theses_sys/images/delete-tiny.png' %}" alt="Edit">
+									    				</a>
+									    			</td>
+									    		</tr>
+									    		<div id="myModal_{{ thesis.id }}" class="reveal-modal tiny" data-reveal style="text-align:center">
+													<h4>Do you really want to delete <em>{{ thesis.title }}</em>?</h4>
+													<a href="app/removeEntry.php?id=<?= $thesis['thesis_id']; ?>&title=<?= $thesis['title']?>" class="tiny button radius">Yes</a>
+													<a class="close-reveal-modal">&times;</a>
+												</div>
+											{% endfor %}
+										{% else %}
+											<tr style="text-align: center">
+								    			<td colspan="6"><h4>No Thesis Yet! <a href="addEntry.php">Add one?</a></h4></td>
+								    		</tr>
+										{% endif %}
+									</tbody>
+						    	</table>
+							</fieldset>
+						</div>	
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		{% include 'theses_sys/fronts/footer.html' %}
+		{% include 'theses_sys/fronts/scripts.html' %}
+	</body>
+</html>

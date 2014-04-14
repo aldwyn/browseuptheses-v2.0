@@ -4,8 +4,11 @@ from django.contrib.auth import signals
 from theses_sys.models import Thesis, FacultyProfile, Researcher, Department, Tag, Category
 
 def index(request):
+	return render(request, 'theses_sys/index.html')
+
+def home(request):
 	theses = Thesis.objects.all().order_by('title')
-	return render(request, 'theses_sys/index.html', {'theses': theses})
+	return render(request, 'theses_sys/home.html', {'theses': theses})
 
 def create_user(request, quantity):
 	for i in range(quantity):
@@ -13,6 +16,9 @@ def create_user(request, quantity):
 		user.save()
 
 def show_login(request):
+	return render(request, 'theses_sys/login.html')
+
+def create_user_session(request):
 	username = request.POST['username']
 	password = request.POST['password']
 	user = get_object_or_404(User, username=username)
@@ -23,11 +29,13 @@ def show_session_theses(request):
 
 def show_faculty_theses(request, faculty_id):
 	theses = Thesis.objects.filter(faculty__user_auth__id=faculty_id)
-	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses})
+	faculty = FacultyProfile.objects.get(pk=faculty_id)
+	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses, 'faculty': faculty})
 
 def show_department_theses(request, department_id):
 	theses = Thesis.objects.filter(faculty__department__id=department_id)
-	return render(request, 'theses_sys/department_theses.html', {'theses': theses})
+	department = Department.objects.get(pk=department_id)
+	return render(request, 'theses_sys/department_theses.html', {'theses': theses, 'department': department})
 
 def search(request, filter, query):
 	if filter is 'tag':
@@ -50,8 +58,7 @@ def show_thesis_info(request, thesis_id):
 	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis, 'session': session})
 
 def create_entry(request):
-	categories = Category.objects.all()
-	return render(request, 'theses_sys/create_entry.html', {'categories': categories})
+	return render(request, 'theses_sys/create_entry.html', {'category': Category.objects.all()})
 
 def add_thesis(request):
 	thesis = {}
