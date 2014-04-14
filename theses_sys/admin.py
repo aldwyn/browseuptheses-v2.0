@@ -1,7 +1,16 @@
 from django.contrib import admin
-from theses_sys.models import Researcher, Department, FacultyProfile, Tag, Category, Thesis
+from theses_sys.models import Researcher, Department, FacultyProfile, Tag, Category, Thesis, Tags_Added, Categories_Added
+
+class TagsAddedInline(admin.TabularInline):
+	model = Tags_Added
+	extra = 1
+
+class CategoriesAddedInline(admin.TabularInline):
+	model = Categories_Added
+	extra = 1
 
 class ThesisAdmin(admin.ModelAdmin):
+	inlines = [TagsAddedInline, CategoriesAddedInline]
 	list_filter = ['pub_date']
 	list_display = ('title', 'pub_date')
 	search_fields = ['title', 'researcher', 'faculty', 'tags', 'categories']
