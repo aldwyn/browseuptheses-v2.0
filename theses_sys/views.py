@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.models import User
 from django.contrib.auth import signals
 from theses_sys.models import Thesis, FacultyProfile, Researcher, Department, Tag, Category
 
@@ -17,6 +16,25 @@ def create_user(request, quantity):
 
 def show_login(request):
 	return render(request, 'theses_sys/login.html')
+
+def log_in(request):
+	username = request.POST['username']
+	password = request.POST['password']
+	user = FacultySession.objects.filter(username=username).filter(password=password)
+	if user:
+		profile = FacultyProfile.objects.filter(user_auth=user)
+		if not profile:
+			data = {
+				'session': user,
+				'profile': profile,
+				'departments': Department.objects.all(),
+				'alert': 'Set your profile first.'
+			}
+			return render(request, 'theses_sys/set_profile.html', data)
+		else:
+			return render(request, 'theses_sys/home.html', {'thesis': Thesis.objects.all().order_by('add_date')[:10]})
+	else:
+		return render(request, 'theses_sys/login.html', {'alert': 'Incorrect username/password.'})
 
 def create_user_session(request):
 	username = request.POST['username']
@@ -61,10 +79,10 @@ def create_entry(request):
 	return render(request, 'theses_sys/create_entry.html', {'category': Category.objects.all()})
 
 def show_set_profile(request):
-	user = User.objects.get(pk=2)
-	profile = FacultyProfile.objects.get(user_auth=user)
+	session = FacultySession.objects.get(pk=request.session['f_id'])
+	profile = FacultyProfile.objects.get(user_auth=session)
 	departments = Department.objects.all()
-	return render(request, 'theses_sys/set_profile.html', {'user': user, 'profile': profile, 'departments': departments})
+	return render(request, 'theses_sys/set_profile.html', {'session': session, 'profile': profile, 'departments': departments})
 
 def set_profile(request):
 	first_name = request.POST['first_name']
