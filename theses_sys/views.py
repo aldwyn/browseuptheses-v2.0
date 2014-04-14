@@ -17,11 +17,12 @@ def create_user(request, quantity):
 def show_login(request):
 	return render(request, 'theses_sys/login.html')
 
-def log_in(request):
+def create_user_session(request):
 	username = request.POST['username']
 	password = request.POST['password']
 	user = FacultySession.objects.filter(username=username).filter(password=password)
 	if user:
+		request.session['f_id'] = user.id
 		profile = FacultyProfile.objects.filter(user_auth=user)
 		if not profile:
 			data = {
@@ -35,11 +36,6 @@ def log_in(request):
 			return render(request, 'theses_sys/home.html', {'thesis': Thesis.objects.all().order_by('add_date')[:10]})
 	else:
 		return render(request, 'theses_sys/login.html', {'alert': 'Incorrect username/password.'})
-
-def create_user_session(request):
-	username = request.POST['username']
-	password = request.POST['password']
-	user = get_object_or_404(User, username=username)
 
 def show_session_theses(request):
 	theses = Thesis.objects.all().order_by('title')
@@ -97,7 +93,7 @@ def set_profile(request):
 def add_thesis(request):
 	title = request.POST['title']
 	abstract = request.POST['abstract']
-	faculty = request.session
+	faculty = request.session['']
 	tags = request.POST['tags'].split(',')
 	category = request.POST['category']
 	pub_date = request.POST['pub_date']
