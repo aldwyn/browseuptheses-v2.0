@@ -55,7 +55,7 @@
 													{% endfor %}
 									    			</td>
 									    			<td>
-									    				<a href="editEntry.php?id=<?= $thesis['thesis_id']; ?>">
+									    				<a href="{% url 'theses_sys:show_set_profile' thesis.id %}">
 									    					<img id="edit" src="{% static 'theses_sys/images/edit-tiny.png' %}" alt="Edit">
 									    				</a>
 									    			</td>

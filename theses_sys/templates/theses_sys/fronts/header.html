@@ -16,7 +16,7 @@
 				if ($checkAuth == 'f') { ?>
 					<a href="faculty.php">My Theses</a>
 					<a href="department.php">Department Theses</a>
-					<a href="addEntry.php">Add Thesis</a>
+					<a href="{% url 'theses_sys:create_entry' %}">Add Thesis</a>
 					<a href="setProfile.php">Account Settings</a>
 				<?php } else { ?>
 					<a href="admin.php">Admin</a>
