@@ -55,15 +55,15 @@ But going back to the topic, the story likewise has an impressive picturesque of
 										<div class="row">
 											<div class="small-10 columns">
 												<div class="small-4 columns">
-										        	<label for="author" class="right inline">Author/s</label>
+										        	<label for="author" class="right inline">Researcher/s</label>
 										        </div>
 										        <div class="small-8 columns">
 													<div id="researchers">
 														<input id="ctr" type="hidden" value="0"/>
 														<div id="researcher_0" style="margin-bottom: 5px">
-															<input type="text" style="width: 30%; display: inline-block" name="researcher[0][fn]" placeholder="First Name" required value="Zac"/>
-															<input type="text" style="width: 30%; display: inline-block" name="researcher[0][mn]" placeholder="Middle Name" required value="Horny"/>
-															<input type="text" style="width: 30%; display: inline-block" name="researcher[0][ln]" placeholder="Last Name" required value="Efron"/>
+															<input type="text" style="width: 30%; display: inline-block" name="res_first_name" placeholder="First Name" required value="Zac"/>
+															<input type="text" style="width: 30%; display: inline-block" name="res_middle_name" placeholder="Middle Name" required value="Horny"/>
+															<input type="text" style="width: 30%; display: inline-block" name="res_last_name" placeholder="Last Name" required value="Efron"/>
 															<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/add-tiny.png' %}" onclick="addAuth()" />
 														</div>
 													</div>
@@ -134,9 +134,9 @@ But going back to the topic, the story likewise has an impressive picturesque of
 			function addAuth() {
 				var toAppend = '\
 				<div id="researcher_' + ctr + '" style="margin-bottom: 5px"> \
-					<input type="text" style="width: 30%; display: inline-block" name="researcher[' + ctr + '][fn]" placeholder="First Name" /> \
-					<input type="text" style="width: 30%; display: inline-block" name="researcher[' + ctr + '][mn]" placeholder="Middle Name" /> \
-					<input type="text" style="width: 30%; display: inline-block" name="researcher[' + ctr + '][ln]" placeholder="Last Name" /> \
+					<input type="text" style="width: 30%; display: inline-block" name="res_first_name" placeholder="First Name" /> \
+					<input type="text" style="width: 30%; display: inline-block" name="res_middle_name" placeholder="Middle Name" /> \
+					<input type="text" style="width: 30%; display: inline-block" name="res_last_name" placeholder="Last Name" /> \
 					<img style="display: inline-block; width: 33px" src="{% static "theses_sys/images/delete-tiny.png" %}" onclick="fadeOut(\'#researcher_' + ctr + '\')"/> \
 				</div>';
 				$('#researchers').append(toAppend);

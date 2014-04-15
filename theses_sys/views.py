@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category
 
 def index(request):
@@ -106,20 +107,18 @@ def update_profile(request):
 def add_thesis(request):
 	title = request.POST['title']
 	abstract = request.POST['abstract']
-	researchers = request.POST['researcher']
 	faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
+	res_first_name = request.POST.getlist('res_first_name')
+	res_middle_name = request.POST.getlist('res_middle_name')
+	res_last_name = request.POST.getlist('res_last_name')
 	tags = request.POST['tags'].split(',')
-	category = request.POST['category']
+	category = Category.objects.get(pk=request.POST['category'])
 	pub_date = request.POST['pub_date']
 	acc_date = request.POST['acc_date']
 
 	res_list = []
-	for researcher in researchers:
-		new_researcher = Researcher(
-				first_name = researcher['first_name'],
-				middle_name = researcher['middle_name'],
-				last_name = researcher['last_name']
-			)
+	for i in list(range(len(res_first_name))):
+		new_researcher = Researcher(first_name=res_first_name[i],middle_name=res_middle_name[i],last_name=res_last_name[i])
 		new_researcher.save()
 		res_list.append(new_researcher)
 
@@ -129,12 +128,9 @@ def add_thesis(request):
 		new_tag.save()
 		tag_list.append(new_tag)
 
-	cat_list = []
-	for category in categories:
-		new_category = Category(name=category.strip())
-		new_category.save()
-		cat_list.append(new_category)
-
-	new_theses = Thesis(title=title, abstract=abstract, researchers=res_list, faculty=faculty, tags=tag_list, categories=cat_list, pub_date=pub_date, acc_date=acc_date)
+	new_theses = Thesis(title=title, abstract=abstract, researchers=res_list, faculty=faculty, tags=tag_list, categories=category, pub_date=pub_date, acc_date=acc_date)
 	new_theses.save()
+	# output = ', '.join([p.title for p in new_theses])
+	# return HttpResponse(request.POST.getlist('res_first_name')[0])
+	# return HttpResponse(len(request.POST.getlist('res_first_name')))
 	return render(request, 'theses_sys/thesis_info.html', {'thesis': new_theses})
