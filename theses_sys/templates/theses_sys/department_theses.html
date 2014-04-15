@@ -33,9 +33,7 @@
 							    			{% endfor %}
 							    			</td>
 							    			<td>
-							    			{% for category in thesis.categories.all %}
-												<a href="{% url 'theses_sys:search' 'category' category.name %}" class="label">{{ category }}</a>
-											{% endfor %}
+							    			<a href="{% url 'theses_sys:search' 'category' thesis.category.name %}" class="label">{{ thesis.category }}</a>
 							    			</td>
 							    			<td>
 							    			{% for tag in thesis.tags.all %}

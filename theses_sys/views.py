@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category
+from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
 
 def index(request):
 	return render(request, 'theses_sys/index.html')
@@ -40,9 +40,9 @@ def show_session_theses(request):
 	theses = Thesis.objects.all().order_by('title')
 	return render(request, 'theses_sys/index.html', {'theses': theses})
 
-def show_faculty_theses(request, faculty_id):
-	theses = Thesis.objects.filter(faculty__user_auth__id=faculty_id)
-	faculty = FacultyProfile.objects.get(pk=faculty_id)
+def show_faculty_theses(request, username):
+	theses = Thesis.objects.filter(faculty__user_auth__username=username)
+	faculty = FacultyProfile.objects.get(user_auth__username=username)
 	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses, 'faculty': faculty})
 
 def show_department_theses(request, department_id):
@@ -107,30 +107,28 @@ def update_profile(request):
 def add_thesis(request):
 	title = request.POST['title']
 	abstract = request.POST['abstract']
-	faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
-	res_first_name = request.POST.getlist('res_first_name')
-	res_middle_name = request.POST.getlist('res_middle_name')
-	res_last_name = request.POST.getlist('res_last_name')
 	tags = request.POST['tags'].split(',')
+	faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
 	category = Category.objects.get(pk=request.POST['category'])
 	pub_date = request.POST['pub_date']
 	acc_date = request.POST['acc_date']
+	res_first_name = request.POST.getlist('res_first_name')
+	res_middle_name = request.POST.getlist('res_middle_name')
+	res_last_name = request.POST.getlist('res_last_name')
 
-	res_list = []
+	new_thesis = Thesis(title=title, abstract=abstract, faculty=faculty, category=category, pub_date=pub_date, acc_date=acc_date)
+	new_thesis.save()
+
 	for i in list(range(len(res_first_name))):
 		new_researcher = Researcher(first_name=res_first_name[i],middle_name=res_middle_name[i],last_name=res_last_name[i])
 		new_researcher.save()
-		res_list.append(new_researcher)
+		new_thesis.researchers.add(new_researcher)
+		new_thesis.save()
 
-	tag_list = []
 	for tag in tags:
 		new_tag = Tag(name=tag.strip())
 		new_tag.save()
-		tag_list.append(new_tag)
+		tag_fk = Tags_Added(tag=new_tag, thesis=new_thesis)
+		tag_fk.save()
 
-	new_theses = Thesis(title=title, abstract=abstract, researchers=res_list, faculty=faculty, tags=tag_list, categories=category, pub_date=pub_date, acc_date=acc_date)
-	new_theses.save()
-	# output = ', '.join([p.title for p in new_theses])
-	# return HttpResponse(request.POST.getlist('res_first_name')[0])
-	# return HttpResponse(len(request.POST.getlist('res_first_name')))
-	return render(request, 'theses_sys/thesis_info.html', {'thesis': new_theses})
+	return render(request, 'theses_sys/thesis_info.html', {'thesis': new_thesis})

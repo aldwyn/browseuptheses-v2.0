@@ -8,7 +8,7 @@
 				margin: 20px;
 			}
 
-			.abs_parag {
+			p {
 				text-indent: 3em;
 				font-size: 14px;
 				text-align: justify;
@@ -49,7 +49,7 @@
 										<tr>
 											<th>Faculty</th>
 											<td>
-												<a href="{% url 'theses_sys:show_faculty_theses' thesis.faculty.user_auth.id %}">{{ thesis.faculty }}</a>
+												<a href="{% url 'theses_sys:show_faculty_theses' thesis.faculty.user_auth.username %}">{{ thesis.faculty }}</a>
 											</td>
 										</tr>
 										<tr>
@@ -67,11 +67,9 @@
 											</td>
 										</tr>
 										<tr>
-											<th>Categories</th>
+											<th>Category</th>
 											<td>
-											{% for category in thesis.categories.all %}
-												<a href="{% url 'theses_sys:search' 'category' category.name %}" class="label">{{ category }}</a>
-											{% endfor %}
+												<a href="{% url 'theses_sys:search' 'category' thesis.category.name %}">{{ thesis.category }}</a>
 											</td>
 										</tr>
 										<tr>
@@ -91,7 +89,7 @@
 									<h5>Abstract</h5>
 								</legend>
 								<div>
-									<p class="abs_parag">{{ thesis.abstract | linebreaksbr }}</p>
+									<p>{{ thesis.abstract | linebreaks | linebreaks }}</p>
 								</div>
 								<a href="#top">Back to top &raquo</a>
 							</fieldset>
