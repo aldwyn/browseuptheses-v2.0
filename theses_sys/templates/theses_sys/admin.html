@@ -1,13 +1,15 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>Browse UP Theses | UP Cebu's Online Theses Archive</title>
-		<?php include('fronts/meta.php'); ?>
+		{% include 'theses_sys/fronts/meta.html' %}
 	</head>
 
 	<body>
 		<div id="main-wrapper">
-			<?php include('fronts/header.php'); ?>
+			{% include 'theses_sys/fronts/header.html' %}
 
 			<div id="wrap">
 				<div id="main">				
@@ -16,13 +18,9 @@
 						<fieldset>
 							<legend><h4>CVSC Home</h4></legend>
 							<h3>List of Accounts</h3>
-							<?php if (isset($_SESSION['alert'])) { ?>
-						    	<div data-alert class="alert-box warning radius" style="background-color:#420E0E; margin-top: 20px">
-								  	<?= $_SESSION['alert']?>
-									<a href="#" class="close" style="color: white">&times;</a>
-									<?php unset($_SESSION['alert']); ?>
-								</div>
-							<?php } ?>
+							
+							{% include 'theses_sys/fronts/alert.html' %}
+
 						    <div id="facultyList" style="margin: 20px auto">
 						    	<table style="width: 100%">
 						    		<thead>
@@ -39,23 +37,24 @@
 						    		<form id="toDeleteMultiple" action="app/removeMultipleFaculty.php" method="POST"></form>
 						    		<form id="toPrintMultiple" action="print.php" method="POST"></form>
 						    		<tbody>
-					    			<?php foreach ($faculty_array as $faculty) : ?>
+					    			{% for account in accounts %}
 										<tr>
 											<td style="width: 0">
 												<input type="checkbox" class="checkbox" form="toDeleteMultiple" name="faculty_id[<?= $faculty['faculty_id']; ?>]" value="<?= $faculty['faculty_id']; ?>"
 												onselect="document.getElementById('deleteSelected').disabled = false">
 											</td>
-											<td><?= $faculty['fac_username']; ?></td>
+											<td>{{ account.user_auth.username }}</td>
 							    			<td style="text-align: left">
 							    				<?php if (isset($faculty['full_name'])) { ?>
-							    					<a href="facultyWorks.php?id=<?= $faculty['faculty_id']; ?>"><?= $faculty['full_name']; ?></a>
+							    					<!-- <a href="facultyWorks.php?id=<?= $faculty['faculty_id']; ?>"><?= $faculty['full_name']; ?></a> -->
 							    				<?php } else { ?>
 							    					<span>Not yet set</span>
 							    				<?php } ?>
+							    				{{ account.username }}
 							    			</td>
 							    			<td style="text-align: left">
 							    				<?php if (isset($faculty['department_name'])) { ?>
-							    					<a href="department.php?id=<?= $faculty['department_id']; ?>"><?= $faculty['department_name']; ?></a>
+							    					<!-- <a href="department.php?id=<?= $faculty['department_id']; ?>"><?= $faculty['department_name']; ?></a> -->
 							    				<?php } else { ?>
 							    					<span>Not yet set</span>
 							    				<?php } ?>
@@ -63,7 +62,7 @@
 							    			<td style="text-align: center"><?= (isset($faculty['thesis_counts'])) ? $faculty['thesis_counts'] : 0; ?></td>
 							    			<td style="text-align: center">
 							    				<a href="#" title="Print out this account" <?= (!isset($faculty['full_name'])) ? 'data-reveal-id="print_' . $faculty['faculty_id'] . '" data-reveal' : 'style="opacity: .4"'; ?>>
-							    					<img id="print" src="images/print-tiny.png" alt="Edit" style="height: 50%" >
+							    					<img id="print" src="{% static 'theses_sys/images/print-tiny.png' %}" alt="Edit" style="height: 50%" >
 							    				</a>
 							    			</td>
 							    			<div id="print_<?=$faculty['faculty_id']?>" class="reveal-modal tiny" data-reveal style="text-align:center">
@@ -104,7 +103,7 @@
 											</div>
 											<td style="text-align: center">
 							    				<a href="#" title="Remove this account" data-reveal-id="myModal_<?=$faculty['faculty_id']?>" data-reveal>
-							    					<img id="delete" src="images/delete-tiny.png" alt="Edit" style="height: 50%">
+							    					<img id="delete" src="{% static 'theses_sys/images/delete-tiny.png' %}" alt="Edit" style="height: 50%">
 							    				</a>
 							    			</td>
 							    			<div id="myModal_<?=$faculty['faculty_id']?>" class="reveal-modal tiny" data-reveal style="text-align:center">
@@ -117,7 +116,7 @@
 												<a class="close-reveal-modal">&times;</a>
 											</div>
 							    		</tr>
-									<?php endforeach; ?>
+									{% endfor %}
 						    		</tbody>
 						    	</table>
 						    </div>
@@ -140,8 +139,8 @@
 			</div>
 		</div>
 		
-		<?php include('fronts/footer.php'); ?>
-		<?php include('fronts/scripts.php'); ?>
+		{% include 'theses_sys/fronts/footer.html' %}
+		{% include 'theses_sys/fronts/scripts.html' %}
 		<script>
 			var printSelected = document.getElementById('printSelected');
 			printSelected.onmouseover = function() {
