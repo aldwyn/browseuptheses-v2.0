@@ -23,7 +23,7 @@
         <div id="branding">
         {% block branding %}{% endblock %}
         </div>
-        {% if user.is_active and user.is_staff %}
+        {% if user.is_active and user.is_staff and user.is_superuser %}
         <div id="user-tools">
             {% trans 'Welcome,' %}
             <strong>{% firstof user.get_short_name user.get_username %}</strong>.
@@ -35,6 +35,7 @@
                 {% if user.has_usable_password %}
                 <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
                 {% endif %}
+                <a href="{% url 'theses_sys:show_admin' %}" >Manage Accounts</a> / 
                 <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
             {% endblock %}
         </div>

@@ -17,6 +17,9 @@ def create_user(request, quantity):
 def show_login(request):
 	return render(request, 'theses_sys/login.html')
 
+def show_admin(request):
+	return render(request, 'theses_sys/admin.html', {'accounts': FacultyProfile.objects.all()})
+
 def create_user_session(request):
 	username = request.POST['username']
 	password = request.POST['password']
