@@ -15,18 +15,21 @@ def create_user(request, quantity):
 		user = User.objects.create_user('john', 'kdjgd')
 		user.save()
 
+def delete_users(request):
+	return redirect('theses_sys:admin')
+
 def show_login(request):
 	return render(request, 'theses_sys/login.html')
 
 def show_admin(request):
-	data = {'accounts': {}}
+	data = {'accounts': []}
 	accounts = FacultySession.objects.all()
 	for account in accounts:
-		profile = FacultyProfile.objects.filter(user_auth=account)
+		profile = FacultyProfile.objects.get(user_auth=account)
 		if profile:
-			data['accounts'][account.username] = {'account': account, 'profile': profile}
+			data['accounts'].append({'account': account, 'profile': profile, 'thesis_count': len(Thesis.objects.filter(faculty=profile))})
 		else:
-			data['accounts'].append({'account': account, 'profile': ''})
+			data['accounts'].append({'account': account, 'profile': '', 'thesis_count': 0})
 
 	return render(request, 'theses_sys/admin.html', data)
 

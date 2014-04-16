@@ -40,33 +40,44 @@
 					    			{% for account in accounts %}
 										<tr>
 											<td style="width: 0">
-												<input type="checkbox" class="checkbox" form="toDeleteMultiple" name="faculty_id[<?= $faculty['faculty_id']; ?>]" value="<?= $faculty['faculty_id']; ?>"
+												<input type="checkbox" class="checkbox" form="toDeleteMultiple" name="faculty_id" value="{{ account.account.id }}"
 												onselect="document.getElementById('deleteSelected').disabled = false">
 											</td>
-											<td>{{ account.account }}</td>
+											<td>{{ account.account.username }}</td>
 							    			<td style="text-align: left">
-							    				<?php if (isset($faculty['full_name'])) { ?>
-							    					<!-- <a href="facultyWorks.php?id=<?= $faculty['faculty_id']; ?>"><?= $faculty['full_name']; ?></a> -->
-							    				<?php } else { ?>
+							    				{% if account.profile %}
+							    					{{ account.profile }}
+							    				{% else %}
 							    					<span>Not yet set</span>
-							    				<?php } ?>
-							    				{{ account.username }}
+							    				{% endif %}
 							    			</td>
 							    			<td style="text-align: left">
-							    				<?php if (isset($faculty['department_name'])) { ?>
-							    					<!-- <a href="department.php?id=<?= $faculty['department_id']; ?>"><?= $faculty['department_name']; ?></a> -->
-							    				<?php } else { ?>
+							    				{% if account.profile %}
+							    					{{ account.profile.department }}
+							    				{% else %}
 							    					<span>Not yet set</span>
-							    				<?php } ?>
+							    				{% endif %}
 							    			</td>
-							    			<td style="text-align: center"><?= (isset($faculty['thesis_counts'])) ? $faculty['thesis_counts'] : 0; ?></td>
-							    			<td style="text-align: center">
-							    				<a href="#" title="Print out this account" <?= (!isset($faculty['full_name'])) ? 'data-reveal-id="print_' . $faculty['faculty_id'] . '" data-reveal' : 'style="opacity: .4"'; ?>>
+							    			<td>{{ account.thesis_count }}</td>
+							    			<td>
+							    				<a href="#" title="Print out this account" 
+							    					{% if not account.profile %}
+								    					data-reveal-id="print_{{ account.account.id }}" data-reveal
+								    				{% else %}
+								    					style="opacity: .4"
+								    				{% endif %}
+								    			>
 							    					<img id="print" src="{% static 'theses_sys/images/print-tiny.png' %}" alt="Edit" style="height: 50%" >
 							    				</a>
 							    			</td>
-							    			<div id="print_<?=$faculty['faculty_id']?>" class="reveal-modal tiny" data-reveal style="text-align:center">
-												<h4>Do you really want to print out <em><?= (isset($faculty['full_name'])) ? $faculty['full_name'] : $faculty['fac_username']; ?>'s</em> log-in details?</h4>
+							    			<div id="print_{{ account.account.id }}" class="reveal-modal tiny" data-reveal style="text-align:center">
+												<h4>Do you really want to print out <em>
+													{% if account.profile %}
+								    					{{ account.profile }}
+								    				{% else %}
+								    					{{ account.account }}
+								    				{% endif %}
+												</em> log-in details?</h4>
 												<style type="text/css">		
 													.accountForm {
 													    width: 250px;
@@ -87,7 +98,7 @@
 														<div style="font-size: 13px; color:gray; font-style:italic">Please edit your account on first log-in</div></br>
 														<div id="username">
 															<p>Username</p>
-															<div style="border-top: 1px solid #bdbdbd"><?= $faculty['fac_username']; ?></div>
+															<div style="border-top: 1px solid #bdbdbd">{{ account.account }}</div>
 														</div>
 														<div id="password">
 															<p>Password</p>
@@ -101,15 +112,20 @@
 												</form>
 												<a class="close-reveal-modal">&times;</a>
 											</div>
-											<td style="text-align: center">
-							    				<a href="#" title="Remove this account" data-reveal-id="myModal_<?=$faculty['faculty_id']?>" data-reveal>
+											<td>
+							    				<a href="#" title="Remove this account" data-reveal-id="myModal_{{ account.account.id }}" data-reveal>
 							    					<img id="delete" src="{% static 'theses_sys/images/delete-tiny.png' %}" alt="Edit" style="height: 50%">
 							    				</a>
 							    			</td>
-							    			<div id="myModal_<?=$faculty['faculty_id']?>" class="reveal-modal tiny" data-reveal style="text-align:center">
-												<h4>Do you really want to delete <em><?= (isset($faculty['full_name'])) ? $faculty['full_name'] : $faculty['fac_username']; ?></em>?</h4>
+							    			<div id="myModal_{{ account.account.id }}" class="reveal-modal tiny" data-reveal style="text-align:center">
+												<h4>Do you really want to delete
+													{% if account.profile %}
+								    					<em>{{ account.profile }}</em>
+								    				{% else %}
+								    					<em>{{ account.account }}</em>
+								    				{% endif %}?</h4>
 												<div data-alert class="alert-box warning radius" style="margin-top: 20px">
-												  	<span>Make sure you have an authorization from the owner to delete this account.</span>
+												  	<span>Make sure you that have an authorization from the owner to delete this account.</span>
 												  	<a href="#" class="close" style="color: white">&times;</a>
 												</div>
 												<a class="tiny button radius" href="app/removeFaculty.php?id=<?= $faculty['faculty_id']; ?>&name=<?= (isset($faculty['full_name'])) ? $faculty['full_name'] : $faculty['fac_username']; ?>" >Yes</a>

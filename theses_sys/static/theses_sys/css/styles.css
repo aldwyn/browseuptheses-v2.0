@@ -61,9 +61,9 @@ header, footer {
     box-shadow: 0 0 10px #420E0E;
 }
 
-table thead tr th {
+/*table thead tr th {
     text-align: center;
-}
+}*/
 
 tbody tr td:first-child {
     font-weight: bold;
