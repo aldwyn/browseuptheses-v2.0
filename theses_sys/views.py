@@ -19,7 +19,16 @@ def show_login(request):
 	return render(request, 'theses_sys/login.html')
 
 def show_admin(request):
-	return render(request, 'theses_sys/admin.html', {'accounts': FacultySession.objects.all()})
+	data = {'accounts': {}}
+	accounts = FacultySession.objects.all()
+	for account in accounts:
+		profile = FacultyProfile.objects.filter(user_auth=account)
+		if profile:
+			data['accounts'][account.username] = {'account': account, 'profile': profile}
+		else:
+			data['accounts'].append({'account': account, 'profile': ''})
+
+	return render(request, 'theses_sys/admin.html', data)
 
 def create_user_session(request):
 	username = request.POST['username']

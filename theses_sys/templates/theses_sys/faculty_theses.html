@@ -40,7 +40,7 @@
 						    			{% if theses %}
 											{% for thesis in theses %}
 												<tr>
-									    			<td><a href="{% url 'theses_sys:thesis_info' thesis.id %}">{{ thesis.title }}</a></td>
+									    			<td><a href="{% url 'theses_sys:thesis_info' thesis.slug %}">{{ thesis.title }}</a></td>
 									    			<td>
 									    			{% for researcher in thesis.researchers.all %}
 														<span class="label secondary">{{ researcher }}</span>

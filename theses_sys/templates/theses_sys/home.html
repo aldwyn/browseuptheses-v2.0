@@ -28,7 +28,7 @@
 						{% for thesis in theses %}
 							<article class="small-6 columns" style="padding: 10px 20px; height: 200px">
 								<div style="text-align: center; padding: 10px; border: 1px solid #bdbdbd;">
-									<a href="{% url 'theses_sys:thesis_info' thesis.id %}" style="font-weight: bolder; padding-bottom: 10px;">{{ thesis.title }}</a>
+									<a href="{% url 'theses_sys:thesis_info' thesis.slug %}" style="font-weight: bolder; padding-bottom: 10px;">{{ thesis.title }}</a>
 									<div style="margin-top: 6px; font-size: 75%;">under <a href="{% url 'theses_sys:faculty_theses' thesis.faculty.user_auth.id %}">{{ thesis.faculty }}</a>, published on <em>{{ thesis.pub_date }}</em></div>
 									<blockquote style="line-height: 99%; text-indent: 2em; text-align: justify; width: 100%; font-size: 90%">{{ thesis.abstract | truncatechars:350 }}</blockquote>
 								</div>

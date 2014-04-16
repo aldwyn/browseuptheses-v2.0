@@ -43,7 +43,7 @@
 												<input type="checkbox" class="checkbox" form="toDeleteMultiple" name="faculty_id[<?= $faculty['faculty_id']; ?>]" value="<?= $faculty['faculty_id']; ?>"
 												onselect="document.getElementById('deleteSelected').disabled = false">
 											</td>
-											<td>{{ account.user_auth.username }}</td>
+											<td>{{ account.account }}</td>
 							    			<td style="text-align: left">
 							    				<?php if (isset($faculty['full_name'])) { ?>
 							    					<!-- <a href="facultyWorks.php?id=<?= $faculty['faculty_id']; ?>"><?= $faculty['full_name']; ?></a> -->
