@@ -63,10 +63,9 @@ def search(request, filter, query):
 		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
 	return render(request, 'theses_sys/search.html', {'filter': filter, 'query': query, 'theses': theses})
 
-def show_thesis_info(request, thesis_id, slug):
+def show_thesis_info(request, thesis_id):
 	thesis = get_object_or_404(Thesis, pk=thesis_id)
-	session = request.session.session_key
-	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis, 'session': session})
+	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis})
 
 def create_entry(request):
 	if request.session['f_id']:

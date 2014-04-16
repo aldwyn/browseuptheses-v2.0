@@ -14,5 +14,5 @@ urlpatterns = patterns('',
 	url(r'^getting_started/$', views.create_user_session, name='create_user_session'),
 	url(r'^department_theses/(?P<department_id>\d+)/$', views.show_department_theses, name='department_theses'),
 	url(r'^faculty_theses/(?P<username>\w+)/$', views.show_faculty_theses, name='faculty_theses'),
-	url(r'^thesis/(?P<slug>+)/$', views.show_thesis_info, name='thesis_info'),
+	url(r'^thesis/(?P<thesis_id>\d+)/$', views.show_thesis_info, name='thesis_info'),
 )
