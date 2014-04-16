@@ -34,26 +34,30 @@
 							    			<th>Delete?</th>
 							    		</tr>
 						    		</thead>
-						    		<form id="toDeleteMultiple" action="app/removeMultipleFaculty.php" method="POST"></form>
-						    		<form id="toPrintMultiple" action="print.php" method="POST"></form>
+						    		<form id="toDeleteMultiple" action="{% url 'theses_sys:delete_accounts' %}" method="POST">
+						    			{% csrf_token %}
+						    		</form>
+						    		<form id="toPrintMultiple" action="{% url 'theses_sys:print_accounts' %}" method="POST">
+						    			{% csrf_token %}
+						    		</form>
 						    		<tbody>
 					    			{% for account in accounts %}
 										<tr>
 											<td style="width: 0">
-												<input type="checkbox" class="checkbox" form="toDeleteMultiple" name="faculty_id" value="{{ account.account.id }}"
+												<input type="checkbox" class="checkbox" form="toDeleteMultiple" name="acct_id" value="{{ account.account.id }}"
 												onselect="document.getElementById('deleteSelected').disabled = false">
 											</td>
 											<td>{{ account.account.username }}</td>
 							    			<td style="text-align: left">
 							    				{% if account.profile %}
-							    					{{ account.profile }}
+							    					<a href="{% url 'theses_sys:faculty_theses' account.account.username %}">{{ account.profile }}</a>
 							    				{% else %}
 							    					<span>Not yet set</span>
 							    				{% endif %}
 							    			</td>
 							    			<td style="text-align: left">
 							    				{% if account.profile %}
-							    					{{ account.profile.department }}
+							    					<a href="{% url 'theses_sys:department_theses' account.profile.department.id %}">{{ account.profile.department }}</a>
 							    				{% else %}
 							    					<span>Not yet set</span>
 							    				{% endif %}
@@ -106,8 +110,9 @@
 														</div>
 													</div>
 												</div>
-												<form action="print.php" method="POST">
-													<input type="hidden" name="faculty_id[<?= $faculty['faculty_id']; ?>]" value="<?= $faculty['faculty_id']; ?>"/>
+												<form action="{% url 'theses_sys:print_account' account.account.id %}" method="POST">
+													{% csrf_token %}
+													<input type="hidden" name="acct_id"/>
 													<input type="submit" class="tiny button radius block" style="margin-top: 15px" value="Yes"/>
 												</form>
 												<a class="close-reveal-modal">&times;</a>
@@ -128,7 +133,7 @@
 												  	<span>Make sure you that have an authorization from the owner to delete this account.</span>
 												  	<a href="#" class="close" style="color: white">&times;</a>
 												</div>
-												<a class="tiny button radius" href="app/removeFaculty.php?id=<?= $faculty['faculty_id']; ?>&name=<?= (isset($faculty['full_name'])) ? $faculty['full_name'] : $faculty['fac_username']; ?>" >Yes</a>
+												<a class="tiny button radius" href="{% url 'theses_sys:delete_account' account.account.id %}" >Yes</a>
 												<a class="close-reveal-modal">&times;</a>
 											</div>
 							    		</tr>

@@ -15,7 +15,29 @@ def create_user(request, quantity):
 		user = User.objects.create_user('john', 'kdjgd')
 		user.save()
 
-def delete_users(request):
+def print_account(request, acct_id):
+	return render(request, 'theses_sys/print.html', {'accounts': FacultySession.objects.filter(pk=acct_id)})
+
+def print_accounts(request):
+	accounts = request.POST.getlist('acct_id')
+	list_to_print = []
+	for acct_id in accounts:
+		list_to_print.append(FacultySession.objects.get(pk=acct_id))
+	return render(request, 'theses_sys/print.html', {'accounts': list_to_print})
+
+def delete_account(request, acct_id):
+	to_delete = FacultySession.objects.get(pk=acct_id)
+	to_delete.delete()
+	request.session['alert'] = 'You deleted ' + to_delete.username + '.'
+	return redirect('theses_sys:admin')
+
+def delete_accounts(request):
+	accounts = request.POST.getlist('acct_id')
+	size = len(accounts)
+	for acct_id in accounts:
+		to_delete = FacultySession.objects.get(pk=acct_id)
+		to_delete.delete()
+	request.session['alert'] = 'You deleted ' + str(size) + ' accounts.'
 	return redirect('theses_sys:admin')
 
 def show_login(request):
@@ -23,11 +45,14 @@ def show_login(request):
 
 def show_admin(request):
 	data = {'accounts': []}
+	if request.session.get('alert'):
+		data['alert'] = request.session.pop('alert')
+
 	accounts = FacultySession.objects.all()
 	for account in accounts:
-		profile = FacultyProfile.objects.get(user_auth=account)
+		profile = FacultyProfile.objects.filter(user_auth=account)
 		if profile:
-			data['accounts'].append({'account': account, 'profile': profile, 'thesis_count': len(Thesis.objects.filter(faculty=profile))})
+			data['accounts'].append({'account': account, 'profile': profile[0], 'thesis_count': Thesis.objects.filter(faculty=profile).count()})
 		else:
 			data['accounts'].append({'account': account, 'profile': '', 'thesis_count': 0})
 
