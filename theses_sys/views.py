@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.text import slugify
 from django.http import HttpResponse
 from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
 
@@ -35,8 +36,8 @@ def create_user_session(request):
 		return render(request, 'theses_sys/login.html', {'alert': 'Incorrect username/password.'})
 
 def show_session_theses(request):
-	theses = Thesis.objects.all().order_by('title')
-	return render(request, 'theses_sys/index.html', {'theses': theses})
+	theses = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
+	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses})
 
 def show_faculty_theses(request, username):
 	theses = Thesis.objects.filter(faculty__user_auth__username=username)
@@ -63,21 +64,32 @@ def search(request, filter, query):
 		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
 	return render(request, 'theses_sys/search.html', {'filter': filter, 'query': query, 'theses': theses})
 
-def show_thesis_info(request, thesis_id):
-	thesis = get_object_or_404(Thesis, pk=thesis_id)
+def show_thesis_info(request, slug):
+	thesis = get_object_or_404(Thesis, slug=slug)
 	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis})
 
 def create_entry(request):
+	data = {'alert': ''}
 	if request.session['f_id']:
-		return render(request, 'theses_sys/create_entry.html', {'categories': Category.objects.all()})
+		data['categories'] = Category.objects.all()
+		if request.session.get('alert'):
+			data['alert'] = request.session.pop('alert')
+		return render(request, 'theses_sys/create_entry.html', data)
 	else:
-		return redirect('theses_sys:show_login')
+		return redirect('theses_sys:login')
+
+def delete_entry(request):
+	return redirect('theses_sys:')
 
 def show_set_profile(request):
 	session = FacultySession.objects.get(pk=request.session['f_id'])
-	profile = FacultyProfile.objects.get(user_auth=session)
+	profile = FacultyProfile.objects.filter(user_auth__id=request.session['f_id'])
 	departments = Department.objects.all()
-	return render(request, 'theses_sys/set_profile.html', {'session': session, 'profile': profile, 'departments': departments})
+	if profile:
+		data = {'session': session, 'profile': profile, 'departments': departments}
+	else:
+		data = {'session': session, 'departments': departments}
+	return render(request, 'theses_sys/set_profile.html', data)
 
 def update_profile(request):
 	password = request.POST['password']
@@ -95,35 +107,42 @@ def update_profile(request):
 		user_auth.username = username
 		user_auth.password = password
 		user_auth.save()
-		return redirect('theses_sys:show_home')
+		return redirect('theses_sys:home')
 	else:
-		return redirect('theses_sys:show_set_profile')
+		return redirect('theses_sys:set_profile')
 
 def add_thesis(request):
 	title = request.POST['title']
 	abstract = request.POST['abstract']
-	tags = request.POST['tags'].split(',')
-	faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
-	category = Category.objects.get(pk=request.POST['category'])
-	pub_date = request.POST['pub_date']
-	acc_date = request.POST['acc_date']
-	res_first_name = request.POST.getlist('res_first_name')
-	res_middle_name = request.POST.getlist('res_middle_name')
-	res_last_name = request.POST.getlist('res_last_name')
+	existing_thesis = Thesis.objects.filter(slug=slugify(title)).filter(abstract=abstract)
 
-	new_thesis = Thesis(title=title, abstract=abstract, faculty=faculty, category=category, pub_date=pub_date, acc_date=acc_date)
-	new_thesis.save()
+	if not existing_thesis:
+		slug = slugify(title)
+		tags = request.POST['tags'].split(',')
+		faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
+		category = Category.objects.get(pk=request.POST['category'])
+		pub_date = request.POST['pub_date']
+		acc_date = request.POST['acc_date']
+		res_first_name = request.POST.getlist('res_first_name')
+		res_middle_name = request.POST.getlist('res_middle_name')
+		res_last_name = request.POST.getlist('res_last_name')
 
-	for i in list(range(len(res_first_name))):
-		new_researcher = Researcher(first_name=res_first_name[i],middle_name=res_middle_name[i],last_name=res_last_name[i])
-		new_researcher.save()
-		new_thesis.researchers.add(new_researcher)
+		new_thesis = Thesis(title=title, slug=slug, abstract=abstract, faculty=faculty, category=category, pub_date=pub_date, acc_date=acc_date)
 		new_thesis.save()
 
-	for tag in tags:
-		new_tag = Tag(name=tag.strip())
-		new_tag.save()
-		tag_fk = Tags_Added(tag=new_tag, thesis=new_thesis)
-		tag_fk.save()
+		for i in list(range(len(res_first_name))):
+			new_researcher = Researcher(first_name=res_first_name[i],middle_name=res_middle_name[i],last_name=res_last_name[i])
+			new_researcher.save()
+			new_thesis.researchers.add(new_researcher)
+			new_thesis.save()
 
-	return redirect('thesis_sys:show_thesis_info', thesis_id=new_thesis.id)
+		for tag in tags:
+			new_tag = Tag(name=tag.strip())
+			new_tag.save()
+			tag_fk = Tags_Added(tag=new_tag, thesis=new_thesis)
+			tag_fk.save()
+
+		return redirect('theses_sys:thesis_info', slug=new_thesis.slug)
+	else:
+		request.session['alert'] = 'There is an existing thesis with the same title/abstract you provided.'
+		return redirect('theses_sys:create_entry')

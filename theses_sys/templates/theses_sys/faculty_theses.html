@@ -30,8 +30,10 @@
 							    			<th>Researcher/s</th>
 							    			<th>Category</th>
 							    			<th>Tags</th>
-							    			<th>Edit?</th>
-							    			<th>Delete?</th>
+							    			{% if not faculty %}
+								    			<th>Edit?</th>
+								    			<th>Delete?</th>
+							    			{% endif %}
 							    		</tr>
 						    		</thead>
 						    		<tbody>
@@ -52,6 +54,7 @@
 														<a href="{% url 'theses_sys:search' 'tag' tag.name %}" class="label">{{ tag }}</a>
 													{% endfor %}
 									    			</td>
+									    			{% if not faculty %}
 									    			<td>
 									    				<a href="">
 									    					<img id="edit" src="{% static 'theses_sys/images/edit-tiny.png' %}" alt="Edit">
@@ -62,6 +65,7 @@
 									    					<img id="delete" src="{% static 'theses_sys/images/delete-tiny.png' %}" alt="Edit">
 									    				</a>
 									    			</td>
+									    			{% endif %}
 									    		</tr>
 									    		<div id="myModal_{{ thesis.id }}" class="reveal-modal tiny" data-reveal style="text-align:center">
 													<h4>Do you really want to delete <em>{{ thesis.title }}</em>?</h4>

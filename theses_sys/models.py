@@ -9,8 +9,8 @@ class Researcher(models.Model):
 
 class Department(models.Model):
 	name = models.CharField(max_length=255)
-	email = models.EmailField()
-	contact_number = models.CharField(max_length=255)
+	email = models.EmailField(null=True)
+	contact_number = models.CharField(max_length=255, null=True)
 	def __unicode__(self):
 		return self.name
 
@@ -25,12 +25,12 @@ class FacultySession(models.Model):
 class FacultyProfile(models.Model):
 	user_auth = models.ForeignKey(FacultySession, primary_key=True, on_delete=models.CASCADE)
 	first_name = models.CharField(max_length=255)
-	middle_name = models.CharField(max_length=255)
+	middle_name = models.CharField(max_length=255, null=True)
 	last_name = models.CharField(max_length=255)
-	gender = models.CharField(max_length=1)
+	gender = models.CharField(max_length=1, default='M')
 	department = models.ForeignKey(Department)
-	email = models.EmailField()
-	contact_number = models.CharField(max_length=255)
+	email = models.EmailField(null=True)
+	contact_number = models.CharField(max_length=255, null=True)
 	def __unicode__(self):
 		return self.last_name + ', ' + self.first_name + ' ' + self.middle_name[0] + '.'
 
