@@ -13,6 +13,57 @@ def show_home(request):
 		data['f_id'] = request.session['f_id']
 	return render(request, 'theses_sys/home.html', data)
 
+def show_login(request):
+	return render(request, 'theses_sys/login.html')
+
+def show_admin(request):
+	data = {'accounts': []}
+	if request.session.get('alert'):
+		data['alert'] = request.session.pop('alert')
+
+	accounts = FacultySession.objects.all()
+	for account in accounts:
+		profile = FacultyProfile.objects.filter(user_auth=account)
+		if profile:
+			data['accounts'].append({'account': account, 'profile': profile[0], 'thesis_count': Thesis.objects.filter(faculty=profile).count()})
+		else:
+			data['accounts'].append({'account': account, 'profile': '', 'thesis_count': 0})
+
+	return render(request, 'theses_sys/admin.html', data)
+
+def show_session_theses(request):
+	theses = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
+	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses})
+
+def show_faculty_theses(request, username):
+	theses = Thesis.objects.filter(faculty__user_auth__username=username)
+	faculty = FacultyProfile.objects.get(user_auth__username=username)
+	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses, 'faculty': faculty})
+
+def show_department_theses(request, department_id):
+	theses = Thesis.objects.filter(faculty__department__id=department_id)
+	department = Department.objects.get(pk=department_id)
+	return render(request, 'theses_sys/department_theses.html', {'theses': theses, 'department': department})
+
+def search(request, filter, query):
+	if filter == 'tag':
+		theses = Thesis.objects.filter(tags__name__contains=query)
+	elif filter == 'category':
+		theses = Thesis.objects.filter(category__name__contains=query)
+	elif filter == 'department':
+		theses = Thesis.objects.filter(faculty__department__name__contains=query)
+	elif filter == 'researcher':
+		theses = Thesis.objects.filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query)
+	elif filter == 'faculty':
+		theses = Thesis.objects.filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
+	else:
+		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
+	return render(request, 'theses_sys/search.html', {'filter': filter, 'query': query, 'theses': theses})
+
+def show_thesis_info(request, slug):
+	thesis = get_object_or_404(Thesis, slug=slug)
+	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis})
+
 def generate_accounts(request):
 	quantity = int(request.GET['quantity'])
 	entry_count = FacultySession.objects.all().count()
@@ -48,24 +99,6 @@ def delete_accounts(request):
 	request.session['alert'] = 'You deleted ' + str(size) + ' accounts.'
 	return redirect('theses_sys:admin')
 
-def show_login(request):
-	return render(request, 'theses_sys/login.html')
-
-def show_admin(request):
-	data = {'accounts': []}
-	if request.session.get('alert'):
-		data['alert'] = request.session.pop('alert')
-
-	accounts = FacultySession.objects.all()
-	for account in accounts:
-		profile = FacultyProfile.objects.filter(user_auth=account)
-		if profile:
-			data['accounts'].append({'account': account, 'profile': profile[0], 'thesis_count': Thesis.objects.filter(faculty=profile).count()})
-		else:
-			data['accounts'].append({'account': account, 'profile': '', 'thesis_count': 0})
-
-	return render(request, 'theses_sys/admin.html', data)
-
 def create_user_session(request):
 	username = request.POST['username']
 	password = request.POST['password']
@@ -74,44 +107,11 @@ def create_user_session(request):
 		request.session['f_id'] = user.id
 		profile = FacultyProfile.objects.filter(user_auth=user)
 		if not profile:
-			return redirect('theses_sys:show_set_profile')
+			return redirect('theses_sys:set_profile')
 		else:
-			return redirect('theses_sys:show_home')
+			return redirect('theses_sys:home')
 	else:
 		return render(request, 'theses_sys/login.html', {'alert': 'Incorrect username/password.'})
-
-def show_session_theses(request):
-	theses = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
-	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses})
-
-def show_faculty_theses(request, username):
-	theses = Thesis.objects.filter(faculty__user_auth__username=username)
-	faculty = FacultyProfile.objects.get(user_auth__username=username)
-	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses, 'faculty': faculty})
-
-def show_department_theses(request, department_id):
-	theses = Thesis.objects.filter(faculty__department__id=department_id)
-	department = Department.objects.get(pk=department_id)
-	return render(request, 'theses_sys/department_theses.html', {'theses': theses, 'department': department})
-
-def search(request, filter, query):
-	if filter == 'tag':
-		theses = Thesis.objects.filter(tags__name__contains=query)
-	elif filter == 'category':
-		theses = Thesis.objects.filter(category__name__contains=query)
-	elif filter == 'department':
-		theses = Thesis.objects.filter(faculty__department__name__contains=query)
-	elif filter == 'researcher':
-		theses = Thesis.objects.filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query)
-	elif filter == 'faculty':
-		theses = Thesis.objects.filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
-	else:
-		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
-	return render(request, 'theses_sys/search.html', {'filter': filter, 'query': query, 'theses': theses})
-
-def show_thesis_info(request, slug):
-	thesis = get_object_or_404(Thesis, slug=slug)
-	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis})
 
 def create_entry(request):
 	data = {'alert': ''}
