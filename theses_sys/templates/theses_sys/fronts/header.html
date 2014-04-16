@@ -18,7 +18,7 @@
 			<a href="#" data-reveal-id="logoutModal" data-reveal>Log out</a>
 			<div id="logoutModal" class="reveal-modal tiny" data-reveal style="text-align:center">
 				<h4>Do you really want to log out?</h4>
-				<a href="app/logout.php" class="tiny button radius">Yes</a>
+				<a href="{% url 'theses_sys:logout' %}" class="tiny button radius">Yes</a>
 				<a class="close-reveal-modal">&times;</a>
 			</div>
 		{% else %}

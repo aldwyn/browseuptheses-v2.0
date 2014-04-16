@@ -45,6 +45,10 @@ def show_department_theses(request, department_id):
 	department = Department.objects.get(pk=department_id)
 	return render(request, 'theses_sys/department_theses.html', {'theses': theses, 'department': department})
 
+def logout(request):
+	request.session.pop('f_id')
+	return redirect('theses_sys:login')
+
 def search(request, filter, query):
 	if filter == 'tag':
 		theses = Thesis.objects.filter(tags__name__contains=query)
