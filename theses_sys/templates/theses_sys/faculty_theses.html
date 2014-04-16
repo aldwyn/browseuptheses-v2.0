@@ -38,16 +38,14 @@
 						    			{% if theses %}
 											{% for thesis in theses %}
 												<tr>
-									    			<td><a href="{% url 'theses_sys:show_thesis_info' thesis.id %}">{{ thesis.title }}</a></td>
+									    			<td><a href="{% url 'theses_sys:thesis_info' thesis.id %}">{{ thesis.title }}</a></td>
 									    			<td>
 									    			{% for researcher in thesis.researchers.all %}
 														<span class="label secondary">{{ researcher }}</span>
 													{% endfor %}
 													</td>
 									    			<td>
-									    			{% for category in thesis.categories.all %}
-														<a href="{% url 'theses_sys:search' 'category' category.name %}" class="label">{{ category }}</a>
-													{% endfor %}
+									    				<a href="{% url 'theses_sys:search' 'category' thesis.category.name %}" class="label">{{ thesis.category }}</a>
 									    			</td>
 									    			<td>
 									    			{% for tag in thesis.tags.all %}

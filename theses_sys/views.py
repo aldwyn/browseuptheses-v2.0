@@ -1,11 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
 
 def index(request):
 	return render(request, 'theses_sys/index.html')
 
-def home(request):
+def show_home(request):
 	theses = Thesis.objects.all().order_by('title')
 	return render(request, 'theses_sys/home.html', {'theses': theses})
 
@@ -28,14 +28,9 @@ def create_user_session(request):
 		request.session['f_id'] = user.id
 		profile = FacultyProfile.objects.filter(user_auth=user)
 		if not profile:
-			data = {
-				'session': user,
-				'departments': Department.objects.all(),
-				'alert': 'Set your profile first.'
-			}
-			return render(request, 'theses_sys/set_profile.html', data)
+			return redirect('theses_sys:show_set_profile')
 		else:
-			return render(request, 'theses_sys/home.html', {'thesis': Thesis.objects.all().order_by('add_date')[:10]})
+			return redirect('theses_sys:show_home')
 	else:
 		return render(request, 'theses_sys/login.html', {'alert': 'Incorrect username/password.'})
 
@@ -54,27 +49,30 @@ def show_department_theses(request, department_id):
 	return render(request, 'theses_sys/department_theses.html', {'theses': theses, 'department': department})
 
 def search(request, filter, query):
-	if filter is 'tag':
+	if filter == 'tag':
 		theses = Thesis.objects.filter(tags__name__contains=query)
-	elif filter is 'category':
+	elif filter == 'category':
 		theses = Thesis.objects.filter(category__name__contains=query)
-	elif filter is 'department':
+	elif filter == 'department':
 		theses = Thesis.objects.filter(faculty__department__name__contains=query)
-	elif filter is 'researcher':
+	elif filter == 'researcher':
 		theses = Thesis.objects.filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query)
-	elif filter is 'faculty':
+	elif filter == 'faculty':
 		theses = Thesis.objects.filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
 	else:
 		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
-	return render(request, 'theses_sys/search.html', {'theses': theses})
+	return render(request, 'theses_sys/search.html', {'filter': filter, 'query': query, 'theses': theses})
 
-def show_thesis_info(request, thesis_id):
+def show_thesis_info(request, thesis_id, slug):
 	thesis = get_object_or_404(Thesis, pk=thesis_id)
 	session = request.session.session_key
 	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis, 'session': session})
 
 def create_entry(request):
-	return render(request, 'theses_sys/create_entry.html', {'categories': Category.objects.all()})
+	if request.session['f_id']:
+		return render(request, 'theses_sys/create_entry.html', {'categories': Category.objects.all()})
+	else:
+		return redirect('theses_sys:show_login')
 
 def show_set_profile(request):
 	session = FacultySession.objects.get(pk=request.session['f_id'])
@@ -98,14 +96,9 @@ def update_profile(request):
 		user_auth.username = username
 		user_auth.password = password
 		user_auth.save()
-		return render(request, 'theses_sys/home.html', {'theses': Thesis.objects.all()})
+		return redirect('theses_sys:show_home')
 	else:
-		data = {
-			'session': FacultySession.objects.get(pk=request.session['f_id']),
-			'departments': Department.objects.all(),
-			'alert': 'Passwords mismatched.'
-		}
-		return render(request, 'theses_sys/set_profile.html', data)
+		return redirect('theses_sys:show_set_profile')
 
 def add_thesis(request):
 	title = request.POST['title']
@@ -134,4 +127,4 @@ def add_thesis(request):
 		tag_fk = Tags_Added(tag=new_tag, thesis=new_thesis)
 		tag_fk.save()
 
-	return render(request, 'theses_sys/thesis_info.html', {'thesis': new_thesis})
+	return redirect('thesis_sys:show_thesis_info', thesis_id=new_thesis.id)

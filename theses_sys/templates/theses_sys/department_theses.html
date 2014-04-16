@@ -25,7 +25,7 @@
 									{% for thesis in theses %}
 										<tr>
 							    			<td>
-							    				<a href="{% url 'theses_sys:show_thesis_info' thesis.id %}">{{ thesis.title }}</a>
+							    				<a href="{% url 'theses_sys:thesis_info' thesis.id %}">{{ thesis.title }}</a>
 							    			</td>
 							    			<td>
 							    			{% for researcher in thesis.researchers.all %}

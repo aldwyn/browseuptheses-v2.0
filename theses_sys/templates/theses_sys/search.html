@@ -1,9 +1,50 @@
-{% if theses %}
-	<ul>
-	{% for thesis in theses %}
-		<li><a href="{% url 'theses_sys:show_thesis_info' thesis.id %}">{{ thesis.title }}</a></li>
-	{% endfor %}
-	</ul>
-{% else %}
-	<p>No thesis are available.</p>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% include 'theses_sys/fronts/meta.html' %}
+		<title>Browse UP Theses | UP Cebu's Online Theses Archive</title>
+		<style type="text/css">
+			#thesisSummary {
+			    text-align:justify; 
+			    float:left;
+			    margin-top: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="main-wrapper">
+			{% include 'theses_sys/fronts/header.html' %}
+
+			<div id="wrap">
+				<div class="row">
+					{% include 'theses_sys/fronts/querybox.html' %}
+				</div>
+				<fieldset style="margin-top: 10px">
+					<legend>Searches for 
+						<em><a href="{% url 'theses_sys:search' filter query %}">{{ query }}</a></em>
+						<span>({{ theses|length }} result{{ theses|pluralize }} found)</span>
+					</legend>
+					{% if theses %}
+						<ul>
+						{% for thesis in theses %}
+							<article class="small-6 columns" style="min-height: 200px">
+								<div style="text-align: center; padding: 10px; border: 1px solid #bdbdbd;">
+									<a href="{% url 'theses_sys:thesis_info' thesis.id thesis.title|slugify %}" style="font-weight: bolder; padding-bottom: 10px;">{{ thesis.title }}</a>
+									<div style="margin-top: 6px; font-size: 75%;">under <a href="{% url 'theses_sys:faculty_theses' thesis.faculty.user_auth.id %}">{{ thesis.faculty }}</a>, published on <em>{{ thesis.pub_date }}</em></div>
+									<blockquote style="line-height: 99%; text-indent: 2em; text-align: justify; width: 100%; font-size: 90%">{{ thesis.abstract | truncatechars:350 }}</blockquote>
+								</div>
+							</article>
+						{% endfor %}
+						</ul>
+					{% else %}
+						<p>No thesis are available.</p>
+					{% endif %}
+				</fieldset>
+			</div>
+		</div>
+		
+		{% include 'theses_sys/fronts/scripts.html' %}
+		{% include 'theses_sys/fronts/footer.html' %}
+	</body>
+</html>
