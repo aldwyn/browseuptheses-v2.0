@@ -11,19 +11,19 @@
 	</div>
 	<div class="right" style="margin-top: -50px;">
 		{% if f_id %}
-			<a href="faculty.php">My Theses</a>
+			<a href="{% url 'theses_sys:session_theses' %}">My Theses</a>
 			<a href="department.php">Department Theses</a>
 			<a href="{% url 'theses_sys:create_entry' %}">Add Thesis</a>
-			<a href="setProfile.php">Account Settings</a>
+			<a href="{% url 'theses_sys:set_profile' %}">Account Settings</a>
+			<a href="#" data-reveal-id="logoutModal" data-reveal>Log out</a>
+			<div id="logoutModal" class="reveal-modal tiny" data-reveal style="text-align:center">
+				<h4>Do you really want to log out?</h4>
+				<a href="app/logout.php" class="tiny button radius">Yes</a>
+				<a class="close-reveal-modal">&times;</a>
+			</div>
 		{% else %}
-			<a href="login.php">Log in</a>
+			<a href="{% url 'theses_sys:login' %}">Log in</a>
 		{% endif %}
-		<a href="#" data-reveal-id="logoutModal" data-reveal>Log out</a>
-		<div id="logoutModal" class="reveal-modal tiny" data-reveal style="text-align:center">
-			<h4>Do you really want to log out?</h4>
-			<a href="app/logout.php" class="tiny button radius">Yes</a>
-			<a class="close-reveal-modal">&times;</a>
-		</div>
 	</div>
 	<style>
 		.right a {

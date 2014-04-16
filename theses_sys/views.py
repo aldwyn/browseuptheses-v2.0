@@ -1,7 +1,8 @@
+from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
+from django.contrib.auth.models import BaseUserManager
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.text import slugify
 from django.http import HttpResponse
-from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
 
 def index(request):
 	return render(request, 'theses_sys/index.html')
@@ -12,10 +13,15 @@ def show_home(request):
 		data['f_id'] = request.session['f_id']
 	return render(request, 'theses_sys/home.html', data)
 
-def create_user(request, quantity):
-	for i in range(quantity):
-		user = User.objects.create_user('john', 'kdjgd')
-		user.save()
+def generate_accounts(request):
+	quantity = int(request.GET['quantity'])
+	entry_count = FacultySession.objects.all().count()
+	for i in list(range(entry_count, quantity + entry_count)):
+		password = BaseUserManager().make_random_password(length=7, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789')
+		new_account = FacultySession(username='UPCFACULTY'+str(i), password=password)
+		new_account.save()
+	request.session['alert'] = 'Admin successfully added ' + str(quantity) + ' accounts.'
+	return redirect('theses_sys:admin')
 
 def print_account(request, acct_id):
 	return render(request, 'theses_sys/print.html', {'accounts': FacultySession.objects.filter(pk=acct_id)})

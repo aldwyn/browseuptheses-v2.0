@@ -36,10 +36,10 @@
                 <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
                 {% endif %}
                 <span>Generate Account</span>
-                <form action="" style="display: inline">
-                    <input type="number" min="1" max="100" id="num_accounts" style="width: 10%" value="1" name="quantity" required>
+                <form action="{% url 'theses_sys:generate_accounts' %}" style="display: inline">
+                    <input type="number" min="1" max="100" style="width: 10%" value="1" name="quantity" required>
                     <input type="submit" class="tiny button radius" value="Go" >
-                </form>
+                </form> / 
                 <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
             {% endblock %}
         </div>
