@@ -46,6 +46,7 @@ class Category(models.Model):
 
 class Thesis(models.Model):
 	title = models.CharField(max_length=255)
+	slug = models.SlugField()
 	abstract = models.TextField()
 	researchers = models.ManyToManyField(Researcher)
 	faculty = models.ForeignKey(FacultyProfile, on_delete=models.CASCADE)
