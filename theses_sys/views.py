@@ -7,8 +7,10 @@ def index(request):
 	return render(request, 'theses_sys/index.html')
 
 def show_home(request):
-	theses = Thesis.objects.all().order_by('title')
-	return render(request, 'theses_sys/home.html', {'theses': theses})
+	data = {'theses': Thesis.objects.all().order_by('title'), 'f_id': ''}
+	if request.session['f_id']:
+		data['f_id'] = request.session['f_id']
+	return render(request, 'theses_sys/home.html', data)
 
 def create_user(request, quantity):
 	for i in range(quantity):
