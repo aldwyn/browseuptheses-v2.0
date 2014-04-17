@@ -17,7 +17,13 @@
 			{% include 'theses_sys/fronts/header.html' %}
 
 			<div id="wrap">
-				{% include 'theses_sys/fronts/tagCloud.html' %}
+				<div id="tagcloud">
+				    {% for term in terms %}
+				        <a href="{% url 'theses_sys:search' term.filter term.query %}">
+				        	<span class="{{ term.class }}">{{ term.query }}</span>
+				        </a>
+				    {% endfor %}
+				</div>
 				<div class="row">
 					{% include 'theses_sys/fronts/querybox.html' %}
 				</div>

@@ -18,18 +18,21 @@
 				</div>
 			</div>
 			<form action="{% url 'theses_sys:search' 'all' 'query' %}" class="row collapse" style="margin-top: 40px; padding: 20px; background-color: #bdbdbd" method="post">
+				{% csrf_token %}
 				<div class="small-2 columns">
-					<select name="category">
-						<option value="All" selected>All</option>
-						<option value="Thesis">Thesis</option>
-						<option value="Researcher">Researcher</option>
-						<option value="Department">Department</option>
-						<option value="Faculty">Faculty</option>
-						<option value="Year">Year</option>
+					<select name="filter">
+						<option value="all" selected>All</option>
+						<option value="title">Title</option>
+						<option value="tag">Tag</option>
+						<option value="category">Category</option>
+						<option value="researcher">Researcher</option>
+						<option value="department">Department</option>
+						<option value="faculty">Faculty</option>
+						<option value="year">Year</option>
 					</select>
 				</div>
 				<div class="small-8 columns">
-					<input id="q" type="text" name="search" placeholder="Search for keywords or scopes" autofocus autocomplete="off" onkeyup="updateTypeAhead(q.value)"/>
+					<input id="q" type="text" name="query" style="font-size: 110%; font-weight: bolder; color: #007095;" placeholder="Search for keywords or scopes" autofocus autocomplete="off" onkeyup="updateTypeAhead(q.value)"/>
 					<div id="typeahead-data"></div>
 				</div>
 				<div class="small-2 columns">

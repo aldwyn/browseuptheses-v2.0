@@ -2,19 +2,54 @@
 	<div class="large-12 medium-12 small-12 columns">
 		<fieldset>
 			<legend>Basic Search</legend>
-			<form action="search.php" method="GET" class="row collapse">
+			<form action="{% url 'theses_sys:redirect_to_search' %}" method="post" class="row collapse">
+				{% csrf_token %}
 				<div class="small-2 columns">
-					<select name="category">
-						<option value="All" selected>All</option>
-						<option value="Thesis">Thesis</option>
-						<option value="Researcher">Researcher</option>
-						<option value="Department">Department</option>
-						<option value="Faculty">Faculty</option>
-						<option value="Year">Year</option>
+					<select name="filter">
+						<option value="all"
+							{% if filter == 'all' %}
+								{{ 'selected' }}
+							{% endif %}
+						>All</option>
+						<option value="title"
+							{% if filter == 'title' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Title</option>
+						<option value="tag"
+							{% if filter == 'tag' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Tag</option>
+						<option value="category"
+							{% if filter == 'category' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Category</option>
+						<option value="researcher"
+							{% if filter == 'researcher' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Researcher</option>
+						<option value="department"
+							{% if filter == 'department' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Department</option>
+						<option value="faculty"
+							{% if filter == 'faculty' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Faculty</option>
+						<option value="year"
+							{% if filter == 'year' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Year</option>
 					</select>
 				</div>
 				<div class="small-8 columns">
-					<input id="q" type="text" name="search" placeholder="Search for keywords or scopes" autofocus autocomplete="off" onkeyup="updateTypeAhead(q.value)"/>
+					<input id="q" type="text" name="query" style="font-size: 110%; font-weight: bolder; color: #007095;" placeholder="Search for keywords or scopes" autofocus autocomplete="off" onkeyup="updateTypeAhead(q.value)" value="{{ query }}"/>
 					<div id="typeahead-data"></div>
 				</div>
 				<div class="small-2 columns">

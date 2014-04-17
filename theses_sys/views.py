@@ -4,6 +4,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.text import slugify
 from django.http import HttpResponse
+from math import floor
 
 def index(request):
 	return render(request, 'theses_sys/index.html')
@@ -11,11 +12,30 @@ def index(request):
 def show_home(request):
 	data = {}
 	data['theses'] = Thesis.objects.all().order_by('title')
-	if request.session.get('alert'):
-		data['alert'] = request.session.pop('alert')
 	if request.session.get('f_id') and not request.user.is_superuser:
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+		if request.session.get('alert'):
+			data['alert'] = request.session.pop('alert')
+		terms = []
+		for tag in Tag.objects.all():
+			terms.append({'filter': 'tag', 'query': tag.name, 'count': Thesis.objects.filter(tags=tag).count()})
+		for category in Category.objects.all():
+			terms.append({'filter': 'category', 'query': category.name, 'count': Thesis.objects.filter(category=category).count()})
+		maximum = 50
+		for term in terms:
+			percent = floor((term['count'] / maximum) * 100)
+			if percent < 10:
+				term['class'] = 'smallest'
+			elif percent >= 10 and percent < 30:
+				term['class'] = 'small'
+			elif percent >= 30 and percent < 50:
+				term['class'] = 'medium'
+			elif percent >= 50 and percent < 70:
+				term['class'] = 'large'
+			else:
+				term['class'] = 'largest'
+		data['terms'] = terms
 		return render(request, 'theses_sys/home.html', data)
 	else:
 		raise PermissionDenied
@@ -48,27 +68,31 @@ def show_admin(request):
 		raise PermissionDenied
 
 def show_session_theses(request):
-	data = {}
-	if request.session.get('alert'):
-		data['alert'] = request.session.pop('alert')
 	if request.session.get('f_id') and not request.user.is_superuser:
+		data = {}
+		if request.session.get('alert'):
+			data['alert'] = request.session.pop('alert')
 		data['f_id'] = request.session['f_id']
-		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+		faculty = FacultyProfile.objects.get(user_auth__id=data['f_id'])
+		data['faculty'] = faculty
+		data['dept_id'] =faculty.department.id
 		data['theses'] = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
-		return render(request, 'theses_sys/faculty_theses.html', data)
+		return render(request, 'theses_sys/faculty.html', data)
 	else:
 		raise PermissionDenied
 
 def show_faculty_theses(request, username):
-	data = {}
-	data['theses'] = Thesis.objects.filter(faculty__user_auth__username=username)
-	data['faculty'] = FacultyProfile.objects.get(user_auth__username=username)
-	if request.session.get('alert'):
-		data['alert'] = request.session.pop('alert')
 	if request.session.get('f_id') and not request.user.is_superuser:
+		data = {}
+		if request.session.get('alert'):
+			data['alert'] = request.session.pop('alert')
+		data['theses'] = Thesis.objects.filter(faculty__user_auth__username=username)
+		data['faculty'] = FacultyProfile.objects.get(user_auth__username=username)
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
-	return render(request, 'theses_sys/faculty_theses.html', data)
+		return render(request, 'theses_sys/faculty.html', data)
+	else: 
+		raise PermissionDenied
 
 def show_department_theses(request, department_id):
 	data = {}
@@ -79,7 +103,7 @@ def show_department_theses(request, department_id):
 	if request.session.get('f_id') and not request.user.is_superuser:
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
-		return render(request, 'theses_sys/department_theses.html', data)
+		return render(request, 'theses_sys/department.html', data)
 	else:
 		raise PermissionDenied
 
@@ -90,18 +114,23 @@ def show_search(request, filter, query):
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
 		data['alert'] = request.session.pop('alert')
-	if filter == 'tag':
-		theses = Thesis.objects.filter(tags__name__contains=query)
+	if filter == 'title':
+		theses = Thesis.objects.filter(title__icontains=query)
+	elif filter == 'tag':
+		theses = Thesis.objects.filter(tags__name__icontains=query)
 	elif filter == 'category':
-		theses = Thesis.objects.filter(category__name__contains=query)
+		theses = Thesis.objects.filter(category__name__icontains=query)
+	elif filter == 'year':
+		theses = Thesis.objects.filter(pub_date__year=int(query))
 	elif filter == 'department':
-		theses = Thesis.objects.filter(faculty__department__name__contains=query)
+		theses = Thesis.objects.filter(faculty__department__name__icontains=query)
 	elif filter == 'researcher':
-		theses = Thesis.objects.filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query)
+		theses = Thesis.objects.filter(researchers__first_name__icontains=query).filter(researchers__middle_name__icontains=query).filter(researchers__last_name__icontains=query)
 	elif filter == 'faculty':
-		theses = Thesis.objects.filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
+		theses = Thesis.objects.filter(faculty__first_name__icontains=query).filter(faculty__middle_name__icontains=query).filter(faculty__last_name__icontains=query)
 	else:
-		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
+		theses_list = []
+		theses = Thesis.objects.filter(title__icontains=query).filter(tags__name__icontains=query).filter(category__name__icontains=query).filter().filter(faculty__department__name__icontains=query).filter(researchers__first_name__icontains=query).filter(researchers__middle_name__icontains=query).filter(researchers__last_name__icontains=query).filter(faculty__first_name__icontains=query).filter(faculty__middle_name__icontains=query).filter(faculty__last_name__icontains=query)
 	data['theses'] = theses
 	return render(request, 'theses_sys/search.html', data)
 
@@ -366,3 +395,8 @@ def update_entry(request, thesis_id):
 				return redirect('theses_sys:edit_entry', thesis_id=thesis_id)
 	else:
 		raise PermissionDenied
+
+def redirect_to_search(request):
+	filter = request.POST['filter']
+	query = request.POST['query']
+	return redirect('theses_sys:search', filter=filter, query=query)
