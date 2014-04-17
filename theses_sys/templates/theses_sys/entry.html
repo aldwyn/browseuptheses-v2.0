@@ -1,0 +1,161 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Browse UP Theses | UP Cebu's Online Theses Archive</title>
+		{% include 'theses_sys/fronts/meta.html' %}
+	</head>
+
+	<body>
+		<div id="main-wrapper">
+			{% include 'theses_sys/fronts/header.html' %}
+
+			<div id="wrap">
+				<div id="main" style="margin: 20px 0">
+					<div class="row">
+						<div class="large-12 medium-10 small-10 columns">
+							<fieldset style="margin-top: 0">
+								<legend>
+									<h5>Enter Thesis Details</h5>
+								</legend>
+								
+								{% include 'theses_sys/fronts/alert.html' %}
+
+								<form action="{% url 'theses_sys:add_thesis' %}" method="post">
+									{% csrf_token %}
+									<div class="row">
+										<div class="small-10 columns">
+											<div class="small-4 columns">
+												<label for="title" class="right inline">Title</label>
+											</div>
+											<div class="small-8 columns">
+									        	<input type="text" id="title" style="font-size: 110%; font-weight: bolder; color: #007095;"
+									        	name="title" placeholder="Title of the Thesis" required value="{{ thesis.title }}">
+									        </div>
+									    </div>
+									</div>
+									<div class="row" style="margin-bottom: 5px">
+										<div class="small-10 columns">
+											<div class="small-4 columns">
+									          	<label for="abstract" class="right inline">Abstract</label>
+									        </div>
+									        <div class="small-8 columns">
+											    <textarea id="abstract" name="abstract" placeholder="Abstract" 
+											    style="height: 20em; max-width: 100%; font-size: 14px" required>{{ thesis.abstract }}</textarea>
+									        </div>
+									    </div>
+									</div>
+									<div id="addAuthor">
+										<div class="row">
+											<div class="small-10 columns">
+												<div class="small-4 columns">
+										        	<label for="author" class="right inline">Researcher/s</label>
+										        </div>
+										        <div class="small-8 columns">
+													<div id="researchers">
+														{% for researcher in thesis.researchers.all %}
+															<div id="researcher_{{ forloop.counter }}" style="margin-bottom: 5px">
+																<input type="text" style="width: 30%; display: inline-block" name="res_first_name" placeholder="First Name" value="{{ researcher.first_name }}" required/>
+																<input type="text" style="width: 30%; display: inline-block" name="res_middle_name" placeholder="Middle Name" value="{{ researcher.middle_name }}" required/>
+																<input type="text" style="width: 30%; display: inline-block" name="res_last_name" placeholder="Last Name" value="{{ researcher.last_name }}" required/>
+																{% if forloop.count != 1 %}
+																	<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/delete-tiny.png' %}" onclick="fadeOut('#researcher_{{ forloop.counter }}')" />
+																{% else %}
+																	<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/add-tiny.png' %}" onclick="addAuth()" />
+																{% endif %}
+															</div>
+														{% empty %}
+															<div id="researcher_0" style="margin-bottom: 5px">
+																<input type="text" style="width: 30%; display: inline-block" name="res_first_name" placeholder="First Name" required />
+																<input type="text" style="width: 30%; display: inline-block" name="res_middle_name" placeholder="Middle Name" required />
+																<input type="text" style="width: 30%; display: inline-block" name="res_last_name" placeholder="Last Name" required />
+																<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/add-tiny.png' %}" onclick="addAuth()" />
+															</div>
+														{% endfor %}
+													</div>
+										        </div>
+									   	    </div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="small-10 columns">
+											<div class="small-4 columns">
+									       		<label for="select" class="right inline">Categories</label>
+									        </div>
+									        <div class="small-8 columns">
+									        	<select style="font-size: 13px" name="category">
+									        		{% for category in categories %}
+									        			<option value="{{ category.id }}">{{ category }}</option>
+									        		{% endfor %}
+									        	</select>
+									        </div>
+									    </div>
+									</div>
+									<div class="row">
+										<div class="small-10 columns">
+											<div class="small-4 columns">
+												<label for="tags" class="right inline">Tag/s</label>
+											</div>
+											<div class="small-8 columns">
+									        	<input type="text" id="tags" name="tags" placeholder="Tags (separate by comma)" value="polymorphism, inheritance">
+									        </div>
+									    </div>
+									</div>
+								  	<div class="row">
+										<div class="small-10 columns">
+											<div class="small-4 columns">
+									        	<label for="date-published" class="right inline">Date Published</label>
+									        </div>
+									        <div class="small-8 columns">
+									        	<input type="date" id="date-published" name="pub_date" required value="{{ thesis.pub_date }}"/>
+									        </div>
+									    </div>
+									</div>
+									<div class="row">
+										<div class="small-10 columns">
+											<div class="small-4 columns">
+									        	<label for="date-accessioned" class="right inline">Date Accessioned</label>
+									        </div>
+									        <div class="small-8 columns">
+									        	<input type="date" id="date-accessioned" name="acc_date" required value="{{ thesis.acc_date }}"/>
+									        </div>
+									    </div>
+									</div>
+									<div class="row">
+										<div style="text-align: center; margin-top: 20px">
+											<input type="submit" class="tiny button radius" />
+										</div>
+								    </div>
+								</form>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			var ctr = 1;
+			
+			function addAuth() {
+				var toAppend = '\
+				<div id="researcher_' + ctr + '" style="margin-bottom: 5px"> \
+					<input type="text" style="width: 30%; display: inline-block" name="res_first_name" placeholder="First Name" /> \
+					<input type="text" style="width: 30%; display: inline-block" name="res_middle_name" placeholder="Middle Name" /> \
+					<input type="text" style="width: 30%; display: inline-block" name="res_last_name" placeholder="Last Name" /> \
+					<img style="display: inline-block; width: 33px" src="{% static "theses_sys/images/delete-tiny.png" %}" onclick="fadeOut(\'#researcher_' + ctr + '\')"/> \
+				</div>';
+				$('#researchers').append(toAppend);
+				ctr++;
+			}
+
+			function fadeOut(id) {
+				$(id).remove();
+			}
+		</script>
+		
+		{% include 'theses_sys/fronts/footer.html' %}
+		{% include 'theses_sys/fronts/scripts.html' %}
+	</body>
+</html>
