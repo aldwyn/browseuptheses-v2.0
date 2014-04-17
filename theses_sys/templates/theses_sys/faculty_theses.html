@@ -56,7 +56,7 @@
 									    			</td>
 									    			{% if not faculty %}
 									    			<td>
-									    				<a href="">
+									    				<a href="{% url 'theses_sys:edit_entry' thesis.id %}">
 									    					<img id="edit" src="{% static 'theses_sys/images/edit-tiny.png' %}" alt="Edit">
 									    				</a>
 									    			</td>

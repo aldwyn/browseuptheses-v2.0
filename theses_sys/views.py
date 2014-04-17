@@ -47,10 +47,10 @@ def show_admin(request):
 
 def show_session_theses(request):
 	data = {}
-	data['theses'] = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
 	if request.session.get('f_id'):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+		data['theses'] = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
 	if request.session.get('alert'):
 		data['alert'] = request.session['alert']
 	return render(request, 'theses_sys/faculty_theses.html', data)
@@ -138,6 +138,27 @@ def show_print_accounts(request):
 	data['accounts'] = list_to_print
 	return render(request, 'theses_sys/print.html', data)
 
+def show_create_entry(request):
+	data = {}
+	data['categories'] = Category.objects.all()
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/entry.html', data)
+
+def show_edit_entry(request, thesis_id):
+	data = {}
+	data['thesis'] = Thesis.objects.get(pk=thesis_id)
+	data['categories'] = Category.objects.all()
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/entry.html', data)
+
 def logout(request):
 	request.session.pop('f_id')
 	return redirect('theses_sys:login')
@@ -183,15 +204,7 @@ def create_user_session(request):
 		request.session['alert'] = 'Incorrect username/password.'
 		return redirect('theses_sys:login')
 
-def create_entry(request):
-	data = {}
-	if request.session.get('f_id'):
-		data['categories'] = Category.objects.all()
-		if request.session.get('alert'):
-			data['alert'] = request.session.pop('alert')
-		return render(request, 'theses_sys/create_entry.html', data)
-	else:
-		return redirect('theses_sys:login')
+# def update_entry(request):
 
 def delete_entry(request, thesis_id):
 	to_delete = get_object_or_404(Thesis, pk=thesis_id)
