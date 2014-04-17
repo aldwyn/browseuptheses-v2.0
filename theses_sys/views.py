@@ -116,7 +116,7 @@ def show_set_profile(request):
 	data['session'] = FacultySession.objects.get(pk=request.session['f_id'])
 	data['profile'] = FacultyProfile.objects.get(user_auth__id=request.session['f_id'])
 	data['departments'] = Department.objects.all()
-	data['dept_id'] = profile.department.id
+	data['dept_id'] = data['profile'].department.id
 	if request.session.get('f_id'):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
@@ -152,6 +152,11 @@ def show_edit_entry(request, thesis_id):
 	data = {}
 	data['thesis'] = Thesis.objects.get(pk=thesis_id)
 	data['categories'] = Category.objects.all()
+	chunks = []
+	for chunk in data['thesis'].tags.all():
+		chunks.append(chunk.name)
+	categories_joined = ', '.join(chunks)
+	data['categories_joined'] = categories_joined
 	if request.session.get('f_id'):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id

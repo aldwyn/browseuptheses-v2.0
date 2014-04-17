@@ -55,12 +55,12 @@
 										        <div class="small-8 columns">
 													<div id="researchers">
 														{% for researcher in thesis.researchers.all %}
-															<div id="researcher_{{ forloop.counter }}" style="margin-bottom: 5px">
+															<div id="researcher_{{ forloop.counter0 }}" style="margin-bottom: 5px">
 																<input type="text" style="width: 30%; display: inline-block" name="res_first_name" placeholder="First Name" value="{{ researcher.first_name }}" required/>
 																<input type="text" style="width: 30%; display: inline-block" name="res_middle_name" placeholder="Middle Name" value="{{ researcher.middle_name }}" required/>
 																<input type="text" style="width: 30%; display: inline-block" name="res_last_name" placeholder="Last Name" value="{{ researcher.last_name }}" required/>
-																{% if forloop.count != 1 %}
-																	<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/delete-tiny.png' %}" onclick="fadeOut('#researcher_{{ forloop.counter }}')" />
+																{% if forloop.count0 == 1 %}
+																	<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/delete-tiny.png' %}" onclick="fadeOut('#researcher_{{ forloop.counter0 }}')" />
 																{% else %}
 																	<img style="display: inline-block; width: 33px" src="{% static 'theses_sys/images/add-tiny.png' %}" onclick="addAuth()" />
 																{% endif %}
@@ -98,7 +98,7 @@
 												<label for="tags" class="right inline">Tag/s</label>
 											</div>
 											<div class="small-8 columns">
-									        	<input type="text" id="tags" name="tags" placeholder="Tags (separate by comma)" value="polymorphism, inheritance">
+									        	<input type="text" id="tags" name="tags" placeholder="Tags (separate by comma)" value="{{ categories_joined }}">
 									        </div>
 									    </div>
 									</div>
@@ -108,7 +108,7 @@
 									        	<label for="date-published" class="right inline">Date Published</label>
 									        </div>
 									        <div class="small-8 columns">
-									        	<input type="date" id="date-published" name="pub_date" required value="{{ thesis.pub_date }}"/>
+									        	<input type="date" id="date-published" name="pub_date" required value="{{ thesis.pub_date|date:'Y-m-d' }}"/>
 									        </div>
 									    </div>
 									</div>
@@ -118,7 +118,7 @@
 									        	<label for="date-accessioned" class="right inline">Date Accessioned</label>
 									        </div>
 									        <div class="small-8 columns">
-									        	<input type="date" id="date-accessioned" name="acc_date" required value="{{ thesis.acc_date }}"/>
+									        	<input type="date" id="date-accessioned" name="acc_date" required value="{{ thesis.acc_date|date:'Y-m-d' }}"/>
 									        </div>
 									    </div>
 									</div>
