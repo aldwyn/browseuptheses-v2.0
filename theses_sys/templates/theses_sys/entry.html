@@ -19,10 +19,16 @@
 								<legend>
 									<h5>Enter Thesis Details</h5>
 								</legend>
-								
 								{% include 'theses_sys/fronts/alert.html' %}
-
-								<form action="{% url 'theses_sys:add_thesis' %}" method="post">
+								
+								{% url 'theses_sys:update_entry' as to_update_entry %}
+								<form action="
+									{% if thesis %}
+										{% url 'theses_sys:update_entry' thesis.id %}
+									{% else %}
+										{% url 'theses_sys:add_entry' %}
+									{% endif %}
+									" method="post">
 									{% csrf_token %}
 									<div class="row">
 										<div class="small-10 columns">

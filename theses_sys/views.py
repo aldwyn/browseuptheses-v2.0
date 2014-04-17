@@ -15,7 +15,7 @@ def show_home(request):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/home.html', data)
 
 def show_login(request):
@@ -24,14 +24,14 @@ def show_login(request):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/login.html', data)
 
 def show_admin(request):
 	data = {'accounts': []}
 	if request.user.is_superuser:
 		if request.session.get('alert'):
-			data['alert'] = request.session['alert']
+			data['alert'] = request.session.pop('alert')
 
 		accounts = FacultySession.objects.all()
 		for account in accounts:
@@ -52,7 +52,7 @@ def show_session_theses(request):
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 		data['theses'] = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/faculty_theses.html', data)
 
 def show_faculty_theses(request, username):
@@ -63,7 +63,7 @@ def show_faculty_theses(request, username):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/faculty_theses.html', data)
 
 def show_department_theses(request, department_id):
@@ -74,7 +74,7 @@ def show_department_theses(request, department_id):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/department_theses.html', data)
 
 def show_search(request, filter, query):
@@ -83,7 +83,7 @@ def show_search(request, filter, query):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 
 	if filter == 'tag':
 		theses = Thesis.objects.filter(tags__name__contains=query)
@@ -107,7 +107,7 @@ def show_thesis_info(request, slug):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	data['thesis'] = Thesis.objects.get(slug=slug)
 	return render(request, 'theses_sys/thesis_info.html', data)
 
@@ -121,7 +121,7 @@ def show_set_profile(request):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/set_profile.html', data)
 
 def show_print_account(request, acct_id):
@@ -140,16 +140,18 @@ def show_print_accounts(request):
 
 def show_create_entry(request):
 	data = {}
+	data['process'] = 0
 	data['categories'] = Category.objects.all()
 	if request.session.get('f_id'):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/entry.html', data)
 
 def show_edit_entry(request, thesis_id):
 	data = {}
+	data['process'] = 1
 	data['thesis'] = Thesis.objects.get(pk=thesis_id)
 	data['categories'] = Category.objects.all()
 	chunks = []
@@ -161,7 +163,7 @@ def show_edit_entry(request, thesis_id):
 		data['f_id'] = request.session['f_id']
 		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
 	if request.session.get('alert'):
-		data['alert'] = request.session['alert']
+		data['alert'] = request.session.pop('alert')
 	return render(request, 'theses_sys/entry.html', data)
 
 def logout(request):
@@ -237,7 +239,7 @@ def update_profile(request):
 	else:
 		return redirect('theses_sys:set_profile')
 
-def add_thesis(request):
+def add_entry(request):
 	title = request.POST['title']
 	abstract = request.POST['abstract']
 	existing_thesis = Thesis.objects.filter(slug=slugify(title)).filter(abstract=abstract)
@@ -272,3 +274,51 @@ def add_thesis(request):
 	else:
 		request.session['alert'] = 'There is an existing thesis with the same title/abstract you provided.'
 		return redirect('theses_sys:create_entry')
+
+def update_entry(request, thesis_id):
+	title = request.POST['title']
+	abstract = request.POST['abstract']
+	existing_thesis = Thesis.objects.filter(slug=slugify(title)).filter(abstract=abstract)
+
+	if existing_thesis:
+		if existing_thesis[0].id == int(thesis_id):
+			slug = slugify(title)
+			tags = request.POST['tags'].split(',')
+			faculty = FacultyProfile.objects.get(pk=request.session['f_id'])
+			category = Category.objects.get(pk=request.POST['category'])
+			pub_date = request.POST['pub_date']
+			acc_date = request.POST['acc_date']
+			res_first_name = request.POST.getlist('res_first_name')
+			res_middle_name = request.POST.getlist('res_middle_name')
+			res_last_name = request.POST.getlist('res_last_name')
+
+			new_thesis = Thesis.objects.get(pk=thesis_id)
+			Thesis.objects.filter(pk=thesis_id).update(title=title, slug=slug, abstract=abstract, faculty=faculty, category=category, pub_date=pub_date, acc_date=acc_date)
+			new_thesis.researchers.clear()
+			new_thesis.tags.clear()
+
+			for i in list(range(len(res_first_name))):
+				existing_researcher = Researcher.objects.filter(first_name=res_first_name[i], middle_name=res_middle_name[i], last_name=res_last_name[i])
+				if not existing_researcher:
+					new_researcher = Researcher(first_name=res_first_name[i], middle_name=res_middle_name[i], last_name=res_last_name[i])
+					new_researcher.save()
+					new_thesis.researchers.add(new_researcher)
+				else:
+					new_thesis.researchers.add(existing_researcher[0])
+				new_thesis.save()
+
+			for tag in tags:
+				existing_tag = Tag.objects.filter(name=tag)
+				if not existing_tag:
+					new_tag = Tag(name=tag.strip())
+					new_tag.save()
+					tag_fk = Tags_Added(tag=new_tag, thesis=new_thesis)
+					tag_fk.save()
+				else:
+					tag_fk = Tags_Added(tag=existing_tag[0], thesis=new_thesis)
+					tag_fk.save()
+			request.session['alert'] = '"' + str(new_thesis.title) + '" was successfully updated.'
+			return redirect('theses_sys:thesis_info', slug=new_thesis.slug)
+		else:
+			request.session['alert'] = 'There is an existing thesis with the same title/abstract you provided.'
+			return redirect('theses_sys:edit_entry', thesis_id=thesis_id)
