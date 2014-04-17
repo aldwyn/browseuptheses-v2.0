@@ -1,13 +1,16 @@
 from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
-from django.contrib.auth.models import BaseUserManager, User
+from django.contrib.auth.models import BaseUserManager
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.utils.text import slugify
 from django.http import HttpResponse
 from math import floor
 
-def index(request):
-	return render(request, 'theses_sys/index.html')
+from django.views.generic.base import TemplateView
+
+class IndexView(TemplateView):
+	def get(self, request, *args, **kwargs):
+		return render(request, 'theses_sys/index.html')
 
 def show_home(request):
 	data = {}
@@ -276,7 +279,7 @@ def create_user_session(request):
 
 def delete_entry(request, thesis_id):
 	if request.session.get('f_id') and not request.user.is_superuser:
-		to_delete = get_object_or_404(Thesis, pk=thesis_id)
+		to_delete = Thesis.objects.get(pk=thesis_id)
 		to_delete.delete()
 		request.session['alert'] = str(to_delete.title) + ' successfully deleted.'
 		return redirect('theses_sys:session_theses')

@@ -2,8 +2,8 @@ from django.conf.urls import patterns, url
 from theses_sys import views
 
 urlpatterns = patterns('',
-	url(r'^$', views.index, name='index'),
-	url(r'^home/$', views.show_home, name='home'),
+	url(r'^$', views.index.IndexView.as_view(), name='index'),
+	url(r'^home/$', views.home.HomeView.as_view(), name='home'),
 	url(r'^login/$', views.show_login, name='login'),
 	url(r'^logout/$', views.logout, name='logout'),
 	url(r'^admin/$', views.show_admin, name='admin'),
