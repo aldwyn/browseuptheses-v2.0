@@ -69,7 +69,7 @@
 									    		</tr>
 									    		<div id="myModal_{{ thesis.id }}" class="reveal-modal tiny" data-reveal style="text-align:center">
 													<h4>Do you really want to delete <em>{{ thesis.title }}</em>?</h4>
-													<a href="app/removeEntry.php?id=<?= $thesis['thesis_id']; ?>&title=<?= $thesis['title']?>" class="tiny button radius">Yes</a>
+													<a href="{% url 'theses_sys:delete_entry' thesis.id %}" class="tiny button radius">Yes</a>
 													<a class="close-reveal-modal">&times;</a>
 												</div>
 											{% endfor %}

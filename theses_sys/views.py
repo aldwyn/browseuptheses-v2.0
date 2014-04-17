@@ -1,5 +1,6 @@
 from theses_sys.models import Thesis, FacultySession, FacultyProfile, Researcher, Department, Tag, Category, Tags_Added
-from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import BaseUserManager, User
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.text import slugify
 from django.http import HttpResponse
@@ -8,48 +9,82 @@ def index(request):
 	return render(request, 'theses_sys/index.html')
 
 def show_home(request):
-	data = {'theses': Thesis.objects.all().order_by('title'), 'f_id': ''}
-	if request.session['f_id']:
+	data = {}
+	data['theses'] = Thesis.objects.all().order_by('title')
+	if request.session.get('f_id'):
 		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
 	return render(request, 'theses_sys/home.html', data)
 
 def show_login(request):
-	return render(request, 'theses_sys/login.html')
+	data = {}
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/login.html', data)
 
 def show_admin(request):
 	data = {'accounts': []}
-	if request.session.get('alert'):
-		data['alert'] = request.session.pop('alert')
+	if request.user.is_superuser:
+		if request.session.get('alert'):
+			data['alert'] = request.session['alert']
 
-	accounts = FacultySession.objects.all()
-	for account in accounts:
-		profile = FacultyProfile.objects.filter(user_auth=account)
-		if profile:
-			data['accounts'].append({'account': account, 'profile': profile[0], 'thesis_count': Thesis.objects.filter(faculty=profile).count()})
-		else:
-			data['accounts'].append({'account': account, 'profile': '', 'thesis_count': 0})
-
-	return render(request, 'theses_sys/admin.html', data)
+		accounts = FacultySession.objects.all()
+		for account in accounts:
+			profile = FacultyProfile.objects.filter(user_auth=account)
+			if profile:
+				data['accounts'].append({'account': account, 'profile': profile[0], 'thesis_count': Thesis.objects.filter(faculty=profile).count()})
+			else:
+				data['accounts'].append({'account': account, 'profile': '', 'thesis_count': 0})
+		# return HttpResponse(request.user.is_anonymous())
+		return render(request, 'theses_sys/admin.html', data)
+	else:
+		raise PermissionDenied
 
 def show_session_theses(request):
-	theses = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
-	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses})
+	data = {}
+	data['theses'] = Thesis.objects.filter(faculty__user_auth__id=request.session['f_id'])
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/faculty_theses.html', data)
 
 def show_faculty_theses(request, username):
-	theses = Thesis.objects.filter(faculty__user_auth__username=username)
-	faculty = FacultyProfile.objects.get(user_auth__username=username)
-	return render(request, 'theses_sys/faculty_theses.html', {'theses': theses, 'faculty': faculty})
+	data = {}
+	data['theses'] = Thesis.objects.filter(faculty__user_auth__username=username)
+	data['faculty'] = FacultyProfile.objects.get(user_auth__username=username)
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/faculty_theses.html', data)
 
 def show_department_theses(request, department_id):
-	theses = Thesis.objects.filter(faculty__department__id=department_id)
-	department = Department.objects.get(pk=department_id)
-	return render(request, 'theses_sys/department_theses.html', {'theses': theses, 'department': department})
+	data = {}
+	data['theses'] = Thesis.objects.filter(faculty__department__id=department_id)
+	data['department'] = Department.objects.get(pk=department_id)
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/department_theses.html', data)
 
-def logout(request):
-	request.session.pop('f_id')
-	return redirect('theses_sys:login')
+def show_search(request, filter, query):
+	data = {'filter': filter, 'query': query}
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
 
-def search(request, filter, query):
 	if filter == 'tag':
 		theses = Thesis.objects.filter(tags__name__contains=query)
 	elif filter == 'category':
@@ -62,31 +97,61 @@ def search(request, filter, query):
 		theses = Thesis.objects.filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
 	else:
 		theses = Thesis.objects.filter(tags__name__contains=query).filter(category__name__contains=query).filter().filter(faculty__department__name__contains=query).filter(researchers__first_name__contains=query).filter(researchers__middle_name__contains=query).filter(researchers__last_name__contains=query).filter(faculty__first_name__contains=query).filter(faculty__middle_name__contains=query).filter(faculty__last_name__contains=query)
-	return render(request, 'theses_sys/search.html', {'filter': filter, 'query': query, 'theses': theses})
+	
+	data['theses'] = theses
+	return render(request, 'theses_sys/search.html', data)
 
 def show_thesis_info(request, slug):
-	thesis = get_object_or_404(Thesis, slug=slug)
-	return render(request, 'theses_sys/thesis_info.html', {'thesis': thesis})
+	data = {}
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	data['thesis'] = Thesis.objects.get(slug=slug)
+	return render(request, 'theses_sys/thesis_info.html', data)
 
-def generate_accounts(request):
-	quantity = int(request.GET['quantity'])
-	entry_count = FacultySession.objects.all().count()
-	for i in list(range(entry_count, quantity + entry_count)):
-		password = BaseUserManager().make_random_password(length=7, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789')
-		new_account = FacultySession(username='UPCFACULTY'+str(i), password=password)
-		new_account.save()
-	request.session['alert'] = 'Admin successfully added ' + str(quantity) + ' accounts.'
-	return redirect('theses_sys:admin')
+def show_set_profile(request):
+	data = {}
+	data['session'] = FacultySession.objects.get(pk=request.session['f_id'])
+	data['profile'] = FacultyProfile.objects.get(user_auth__id=request.session['f_id'])
+	data['departments'] = Department.objects.all()
+	data['dept_id'] = profile.department.id
+	if request.session.get('f_id'):
+		data['f_id'] = request.session['f_id']
+		data['dept_id'] = FacultyProfile.objects.get(user_auth__id=data['f_id']).department.id
+	if request.session.get('alert'):
+		data['alert'] = request.session['alert']
+	return render(request, 'theses_sys/set_profile.html', data)
 
-def print_account(request, acct_id):
-	return render(request, 'theses_sys/print.html', {'accounts': FacultySession.objects.filter(pk=acct_id)})
+def show_print_account(request, acct_id):
+	data = {}
+	data['accounts'] = FacultySession.objects.filter(pk=acct_id)
+	return render(request, 'theses_sys/print.html', data)
 
-def print_accounts(request):
+def show_print_accounts(request):
+	data = {}
 	accounts = request.POST.getlist('acct_id')
 	list_to_print = []
 	for acct_id in accounts:
 		list_to_print.append(FacultySession.objects.get(pk=acct_id))
-	return render(request, 'theses_sys/print.html', {'accounts': list_to_print})
+	data['accounts'] = list_to_print
+	return render(request, 'theses_sys/print.html', data)
+
+def logout(request):
+	request.session.pop('f_id')
+	return redirect('theses_sys:login')
+
+def generate_accounts(request):
+	quantity = int(request.GET['quantity'])
+	entry_count = FacultySession.objects.all().count()
+	allowed_chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789'
+	for i in list(range(entry_count, quantity + entry_count)):
+		password = BaseUserManager().make_random_password(length=7, allowed_chars=allowed_chars)
+		new_account = FacultySession(username='UPCFACULTY'+str(i), password=password)
+		new_account.save()
+	request.session['alert'] = 'Admin successfully added ' + str(quantity) + ' accounts.'
+	return redirect('theses_sys:admin')
 
 def delete_account(request, acct_id):
 	to_delete = FacultySession.objects.get(pk=acct_id)
@@ -115,11 +180,12 @@ def create_user_session(request):
 		else:
 			return redirect('theses_sys:home')
 	else:
-		return render(request, 'theses_sys/login.html', {'alert': 'Incorrect username/password.'})
+		request.session['alert'] = 'Incorrect username/password.'
+		return redirect('theses_sys:login')
 
 def create_entry(request):
-	data = {'alert': ''}
-	if request.session['f_id']:
+	data = {}
+	if request.session.get('f_id'):
 		data['categories'] = Category.objects.all()
 		if request.session.get('alert'):
 			data['alert'] = request.session.pop('alert')
@@ -127,18 +193,11 @@ def create_entry(request):
 	else:
 		return redirect('theses_sys:login')
 
-def delete_entry(request):
-	return redirect('theses_sys:')
-
-def show_set_profile(request):
-	session = FacultySession.objects.get(pk=request.session['f_id'])
-	profile = FacultyProfile.objects.filter(user_auth__id=request.session['f_id'])
-	departments = Department.objects.all()
-	if profile:
-		data = {'session': session, 'profile': profile, 'departments': departments}
-	else:
-		data = {'session': session, 'departments': departments}
-	return render(request, 'theses_sys/set_profile.html', data)
+def delete_entry(request, thesis_id):
+	to_delete = get_object_or_404(Thesis, pk=thesis_id)
+	to_delete.delete()
+	request.session['alert'] = str(to_delete.title) + ' successfully deleted.'
+	return redirect('theses_sys:session_theses')
 
 def update_profile(request):
 	password = request.POST['password']
