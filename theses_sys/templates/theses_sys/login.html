@@ -8,9 +8,14 @@
 	<body style="margin-top: 200px">
 		<form action="{% url 'theses_sys:create_user_session' %}" method="post">
 			{% csrf_token %}
-			<div style="width: 30%; margin: 0 auto; border: 1px solid #bdbdbd; padding: 20px; text-align: center;">
+			<div style="width: 350px; margin: 0 auto; border: 1px solid #bdbdbd; padding: 20px; text-align: center;">
 				<h3 style="background: #800000; color: #FFF; padding: 5px 0px; margin-bottom: 20px">Log-in</h3>
-				{% include 'theses_sys/fronts/alert.html' %}
+				{% if alert %}
+					<div data-alert class="alert-box warning radius" style="margin-top: 20px">
+					  	<span>{{ alert }}</span>
+					  	<a href="#" class="close" style="color: white">&times;</a>
+					</div>
+				{% endif %}
 				<input type="text" placeholder="Username" name="username" style="margin-bottom: 10px" autofocus />
 				<input type="password" placeholder="Password" name="password" /><br>
 				<input type="submit" class="small button radius" value="Sign in" />
@@ -18,4 +23,6 @@
 			</div>
 		</form>
 	</body>
+
+	{% include 'theses_sys/fronts/scripts.html' %}
 </html>

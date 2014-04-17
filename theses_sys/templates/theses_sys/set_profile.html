@@ -77,7 +77,11 @@
 									        	<div id="department" style="border: 1px solid #CCC; padding: 11px 0 0 11px;">
 									        	{% for department in departments %}
 										        	<div style="display: block; margin-bottom: 1rem">
-										        		<input type="radio" id="dep_{{ department.id }}" name="department" value="{{ department.id }}">
+										        		<input type="radio" id="dep_{{ department.id }}" name="department" value="{{ department.id }}"
+										        		{% if forloop.counter0 == dept_id %}
+										        			{{ 'checked' }}
+										        		{% endif %}
+										        		>
 										        		<label for="dep_{{ department.id }}">{{ department }}</label>
 										        	</div>
 										        {% endfor %}	
@@ -92,10 +96,19 @@
 									        </div>
 									        <div class="small-8 columns">
 									        	<div style="border: 1px solid #CCC; padding: 11px 0 11px 11px;">
-									        		<input type="radio" id="male" name="gender" value="M">
+									        		<input type="radio" id="male" name="gender" value="M"
+									        		{% if profile.gender == 'M' %}
+									        			{{ 'checked' }}
+									        		{% endif %}
+									        		>
 									        		<label for="male">Male</label>
-									        		<input type="radio" id="female" name="gender" value="F">
-									        		<label for="female">Female</label>
+									        		<input type="radio" id="female" name="gender" value="F"
+													{% if profile.gender == 'F' %}
+									        			{{ 'checked' }}
+									        		{% endif %}
+									        		>
+									        		<label for="female"
+									        		>Female</label>
 									        	</div>
 									        </div>
 									    </div>
