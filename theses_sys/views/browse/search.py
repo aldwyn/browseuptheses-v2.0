@@ -1,3 +1,4 @@
+
 from django.views.generic.base import View
 from django.http import HttpResponse
 from django.shortcuts import *
@@ -28,11 +29,25 @@ class SearchView(View):
 		elif filter == 'faculty':
 			theses = Thesis.objects.filter(faculty__first_name__icontains=query).filter(faculty__middle_name__icontains=query).filter(faculty__last_name__icontains=query)
 		else:
-			theses_list = []
-			theses = Thesis.objects.filter(title__icontains=query).filter(tags__name__icontains=query).filter(category__name__icontains=query).filter().filter(faculty__department__name__icontains=query).filter(researchers__first_name__icontains=query).filter(researchers__middle_name__icontains=query).filter(researchers__last_name__icontains=query).filter(faculty__first_name__icontains=query).filter(faculty__middle_name__icontains=query).filter(faculty__last_name__icontains=query)
+			theses = []
+			self.add_to_haystack(theses, query, Thesis.objects.filter(title__icontains=query))
+			self.add_to_haystack(theses, query, Thesis.objects.filter(tags__name__icontains=query))
+			self.add_to_haystack(theses, query, Thesis.objects.filter(category__name__icontains=query))
+			self.add_to_haystack(theses, query, Thesis.objects.filter(faculty__department__name__icontains=query))
+			self.add_to_haystack(theses, query, Thesis.objects.filter(researchers__first_name__icontains=query).filter(researchers__middle_name__icontains=query).filter(researchers__last_name__icontains=query))
+			self.add_to_haystack(theses, query, Thesis.objects.filter(faculty__first_name__icontains=query).filter(faculty__middle_name__icontains=query).filter(faculty__last_name__icontains=query))
+			try:
+				self.add_to_haystack(theses, query, Thesis.objects.filter(pub_date__year=int(query)))
+			except ValueError:
+				pass
+
 		data['theses'] = theses
 		return render(request, 'theses_sys/search.html', data)
 
+	def add_to_haystack(self, theses, query, pool):
+		for thesis in pool:
+			if thesis not in theses:
+				theses.append(thesis)
 
 
 
