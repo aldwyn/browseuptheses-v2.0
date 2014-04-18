@@ -36,7 +36,7 @@ class SearchView(View):
 
 
 
-def redirect(request):
+def search_redirect(request):
 	filter = request.POST['filter']
 	query = request.POST['query']
 	return redirect('theses_sys:search', filter=filter, query=query)

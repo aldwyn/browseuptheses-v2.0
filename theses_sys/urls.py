@@ -24,7 +24,7 @@ urlpatterns += patterns('',
 	url(r'^my-domain/$', browse.session.SessionThesesView.as_view(), name='session-theses'),
 	url(r'^faculty-theses/(?P<username>\w+)/$', browse.faculty.FacultyThesesView.as_view(), name='faculty-theses'),
 	url(r'^department-theses/(?P<department_id>\d+)/$', browse.department.DepartmentThesesView.as_view(), name='department-theses'),
-	url(r'^redirect-to-search/$', browse.search.redirect, name='redirect-to-search'),
+	url(r'^redirect-to-search/$', browse.search.search_redirect, name='redirect-to-search'),
 	url(r'^search/(?P<filter>[a-zA-Z0-9_\- ]+)/(?P<query>[a-zA-Z0-9_\- ]+)/$', browse.search.SearchView.as_view(), name='search'),
 )
 
