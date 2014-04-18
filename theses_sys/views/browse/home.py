@@ -39,5 +39,7 @@ class HomeView(View):
 					term['class'] = 'largest'
 			data['terms'] = terms
 			return render(request, 'theses_sys/home.html', data)
+		elif not request.session.get('f_id') and not request.user.is_superuser:
+			return redirect('theses_sys:index')
 		else:
 			raise PermissionDenied
