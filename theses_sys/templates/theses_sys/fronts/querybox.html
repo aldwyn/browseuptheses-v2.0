@@ -2,7 +2,7 @@
 	<div class="large-12 medium-12 small-12 columns">
 		<fieldset>
 			<legend>Basic Search</legend>
-			<form action="{% url 'theses_sys:redirect_to_search' %}" method="post" class="row collapse">
+			<form action="{% url 'theses_sys:redirect-to-search' %}" method="post" class="row collapse">
 				{% csrf_token %}
 				<div class="small-2 columns">
 					<select name="filter">

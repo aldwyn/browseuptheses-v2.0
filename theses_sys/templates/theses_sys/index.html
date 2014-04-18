@@ -17,7 +17,7 @@
 					<span style="font: 30px normal 'Magistral C'; color: #582E03">UP Cebu's Online Theses Archive</span>
 				</div>
 			</div>
-			<form action="{% url 'theses_sys:search' 'all' 'query' %}" class="row collapse" style="margin-top: 40px; padding: 20px; background-color: #bdbdbd" method="post">
+			<form action="{% url 'theses_sys:redirect-to-search' %}" class="row collapse" style="margin-top: 40px; padding: 20px; background-color: #bdbdbd" method="post">
 				{% csrf_token %}
 				<div class="small-2 columns">
 					<select name="filter">

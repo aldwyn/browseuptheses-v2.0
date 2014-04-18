@@ -1,5 +1,5 @@
 from django.contrib import admin
-from theses_sys.models import Researcher, Department, FacultyProfile, FacultySession, Tag, Category, Thesis, Tags_Added
+from theses_sys.models import *
 
 class TagsAddedInline(admin.TabularInline):
 	model = Tags_Added

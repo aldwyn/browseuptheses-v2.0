@@ -6,7 +6,7 @@
 	</head>
 
 	<body style="margin-top: 200px">
-		<form action="{% url 'theses_sys:create_user_session' %}" method="post">
+		<form action="{% url 'theses_sys:create-user-session' %}" method="post">
 			{% csrf_token %}
 			<div style="width: 350px; margin: 0 auto; border: 1px solid #bdbdbd; padding: 20px; text-align: center;">
 				<h3 style="background: #800000; color: #FFF; padding: 5px 0px; margin-bottom: 20px">Log-in</h3>

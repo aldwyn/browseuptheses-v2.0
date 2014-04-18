@@ -6,9 +6,9 @@ from django.utils.text import slugify
 from django.http import HttpResponse
 from math import floor
 
-from django.views.generic.base import TemplateView
+from django.views.generic.base import View
 
-class IndexView(TemplateView):
+class IndexView(View):
 	def get(self, request, *args, **kwargs):
 		return render(request, 'theses_sys/index.html')
 

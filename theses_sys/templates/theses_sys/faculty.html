@@ -17,7 +17,7 @@
 						<div class="large-12 medium-10 small-10 columns">
 							<fieldset id = "profile">
 							    <legend>
-							    	<h5><a href="{% url 'theses_sys:faculty_theses' faculty.user_auth.username %}">{{ faculty.user_auth.username }}</a> | <em>{{ faculty }}</em></h5>
+							    	<h5><a href="{% url 'theses_sys:faculty-theses' faculty.user_auth.username %}">{{ faculty.user_auth.username }}</a> | <em>{{ faculty }}</em></h5>
 							    </legend>
 
 							    {% include 'theses_sys/fronts/alert.html' %}
@@ -39,7 +39,7 @@
 						    			{% if theses %}
 											{% for thesis in theses %}
 												<tr>
-									    			<td><a href="{% url 'theses_sys:thesis_info' thesis.slug %}">{{ thesis.title }}</a></td>
+									    			<td><a href="{% url 'theses_sys:thesis' thesis.slug %}">{{ thesis.title }}</a></td>
 									    			<td>
 									    			{% for researcher in thesis.researchers.all %}
 														<span class="label secondary">{{ researcher }}</span>
@@ -55,7 +55,7 @@
 									    			</td>
 									    			{% if f_id == faculty.user_auth.id %}
 										    			<td>
-										    				<a href="{% url 'theses_sys:edit_entry' thesis.id %}">
+										    				<a href="{% url 'theses_sys:edit-entry' thesis.id %}">
 										    					<img id="edit" src="{% static 'theses_sys/images/edit-tiny.png' %}" alt="Edit">
 										    				</a>
 										    			</td>
@@ -68,7 +68,7 @@
 									    		</tr>
 									    		<div id="myModal_{{ thesis.id }}" class="reveal-modal tiny" data-reveal style="text-align:center">
 													<h4>Do you really want to delete <em>{{ thesis.title }}</em>?</h4>
-													<a href="{% url 'theses_sys:delete_entry' thesis.id %}" class="tiny button radius">Yes</a>
+													<a href="{% url 'theses_sys:delete-entry' thesis.id %}" class="tiny button radius">Yes</a>
 													<a class="close-reveal-modal">&times;</a>
 												</div>
 											{% endfor %}

@@ -21,12 +21,12 @@
 								</legend>
 								{% include 'theses_sys/fronts/alert.html' %}
 								
-								{% url 'theses_sys:update_entry' as to_update_entry %}
+								{% url 'theses_sys:update-entry' as to_update_entry %}
 								<form action="
 									{% if thesis %}
-										{% url 'theses_sys:update_entry' thesis.id %}
+										{% url 'theses_sys:update-entry' thesis.id %}
 									{% else %}
-										{% url 'theses_sys:add_entry' %}
+										{% url 'theses_sys:add-entry' %}
 									{% endif %}
 									" method="post">
 									{% csrf_token %}

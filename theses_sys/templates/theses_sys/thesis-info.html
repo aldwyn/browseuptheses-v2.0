@@ -49,13 +49,13 @@
 										<tr>
 											<th>Faculty</th>
 											<td>
-												<a href="{% url 'theses_sys:faculty_theses' thesis.faculty.user_auth.username %}">{{ thesis.faculty }}</a>
+												<a href="{% url 'theses_sys:faculty-theses' thesis.faculty.user_auth.username %}">{{ thesis.faculty }}</a>
 											</td>
 										</tr>
 										<tr>
 											<th>Department</th>
 											<td>
-												<a href="{% url 'theses_sys:department_theses' thesis.faculty.department.id %}">{{ thesis.faculty.department }}</a>
+												<a href="{% url 'theses_sys:department-theses' thesis.faculty.department.id %}">{{ thesis.faculty.department }}</a>
 											</td>
 										</tr>
 										<tr>
