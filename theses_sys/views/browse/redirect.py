@@ -7,7 +7,6 @@ from theses_sys.models import *
 class SearchRedirectView(View):
 
 	def get(self, request):
-		return HttpResponse('Hey')
 		filter = request.POST['filter']
 		query = request.POST['query']
 		return redirect('theses_sys:search', filter=filter, query=query)
