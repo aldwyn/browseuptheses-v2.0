@@ -1,1 +1,1 @@
-import department, faculty, home, index, redirect, search, session
+import department, faculty, home, index, search, session

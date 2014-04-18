@@ -32,3 +32,11 @@ class SearchView(View):
 			theses = Thesis.objects.filter(title__icontains=query).filter(tags__name__icontains=query).filter(category__name__icontains=query).filter().filter(faculty__department__name__icontains=query).filter(researchers__first_name__icontains=query).filter(researchers__middle_name__icontains=query).filter(researchers__last_name__icontains=query).filter(faculty__first_name__icontains=query).filter(faculty__middle_name__icontains=query).filter(faculty__last_name__icontains=query)
 		data['theses'] = theses
 		return render(request, 'theses_sys/search.html', data)
+
+
+
+
+def redirect(request):
+	filter = request.POST['filter']
+	query = request.POST['query']
+	return redirect('theses_sys:search', filter=filter, query=query)
