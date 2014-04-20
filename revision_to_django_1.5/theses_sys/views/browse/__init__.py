@@ -1,1 +1,0 @@
-import department, faculty, home, index, search, session
