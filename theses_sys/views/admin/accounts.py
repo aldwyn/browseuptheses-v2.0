@@ -7,7 +7,7 @@ from theses_sys.models import *
 class AccountsView(View):
 
 	def get(self, request):
-		data = {'accounts': []}
+		data = {'accounts': [], 'user': request.user}
 		if request.user.is_superuser:
 			if request.session.get('alert'):
 				data['alert'] = request.session.pop('alert')

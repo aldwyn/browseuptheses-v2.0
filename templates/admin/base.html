@@ -1,4 +1,4 @@
-{% load admin_static %}{% load firstof from future %}<!DOCTYPE html>
+{% load admin_static %}<!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
 <title>{% block title %}{% endblock %}</title>
@@ -35,11 +35,6 @@
                 {% if user.has_usable_password %}
                 <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
                 {% endif %}
-                <span>Generate Account</span>
-                <form action="{% url 'theses_sys:generate_accounts' %}" style="display: inline">
-                    <input type="number" min="1" max="100" style="width: 10%" value="1" name="quantity" required>
-                    <input type="submit" class="tiny button radius" value="Go" >
-                </form> / 
                 <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
             {% endblock %}
         </div>
