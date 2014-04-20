@@ -10,7 +10,7 @@
 		</div>
 	</div>
 	<div class="right" style="margin-top: -50px;">
-		{% if user.is_superuser %}
+		{% if user %}
 			<a href="#" data-reveal-id="addTeacherModal" data-reveal>Generate Account</a>
 			<div id="addTeacherModal" class="reveal-modal tiny" data-reveal style="text-align:center">
 				<form id="row" action="{% url 'theses_sys:generate-accounts' %}" method="POST">
@@ -21,7 +21,7 @@
 	    		</form>
 			</div>
 		{% endif %}
-		{% if f_id %}
+		{% if f_id and not user %}
 			<a href="{% url 'theses_sys:session-theses' %}">My Theses</a>
 			<a href="{% url 'theses_sys:department-theses' dept_id %}">Department Theses</a>
 			<a href="{% url 'theses_sys:create-entry' %}">Add Thesis</a>
@@ -32,7 +32,7 @@
 				<a href="{% url 'theses_sys:logout' %}" class="tiny button radius">Yes</a>
 				<a class="close-reveal-modal">&times;</a>
 			</div>
-		{% else %}
+		{% elif not f_id and not user %}
 			<a href="{% url 'theses_sys:login' %}"><em>Faculty</em></a>
 		{% endif %}
 	</div>

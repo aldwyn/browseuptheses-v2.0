@@ -1,0 +1,301 @@
+@font-face {
+    font-family: 'Magistral C';
+    src: url('fonts/magistral_C.ttf');
+}
+
+@font-face {
+    font-family: 'Segoe UI Semilight';
+    src: url('fonts/segoeuisl.ttf');
+}
+
+#wrap {
+	min-height: 100%;
+	font-family: 'Segoe UI Semilight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+body {
+	height: 100%;
+}
+
+/*#wrap a:hover {
+	text-decoration: underline;
+}*/
+
+#brand small {
+	color: #C4B1B1;
+}
+
+#jumbotron {
+	display: block;
+	position: absolute;
+	padding: 100px;
+	z-index: 1000;
+	height: 100%;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background-color: #1D4250;
+	background-size: 100%;
+}
+
+header, footer {
+	background-color: #420E0E;
+	-webkit-box-shadow: 0 0 10px #420E0E;
+	-moz-box-shadow: 0 0 10px #420E0E;
+	box-shadow: 0 0 10px #420E0E;
+}
+
+#main {
+	position: relative;
+	display: block;
+	overflow: auto;
+	height: 100%;
+}
+
+#query-response, #jumbo-query-response {
+	display: none;
+	position: absolute;
+	width: 100%;
+	z-index: 999;
+	background-color: #fff;
+	top: 37px;
+	border: 1px solid #D8D8D8;
+}
+
+#query-response a, #jumbo-query-response a {
+	display: block;
+	padding: 4px 10px;
+	text-transform: none;
+	text-decoration: none;
+}
+
+#query-response a:hover, #jumbo-query-response a:hover {
+	background-color: #007095;
+	color: #C4B1B1;
+}
+
+#thesis_abstract {
+	-webkit-box-shadow: 0 0 10px #420E0E;
+	-moz-box-shadow: 0 0 10px #420E0E;
+	box-shadow: 0 0 10px #420E0E;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-family: 'Segoe UI Semilight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+#results-count {
+	text-align: right;
+}
+
+article {
+	margin-top: 10px;
+	padding: 10px 20px 0 20px;
+	border: 1px solid #D8D8D8;
+}
+
+fieldset {
+	margin: 30px 0;
+}
+
+aside button {
+	width: 100%;
+}
+
+
+#abstract {
+	overflow: auto;
+	min-width: 100%;
+	max-width: 100%;
+	font-size: 14px;
+}
+#profile {
+	margin-top: 0px;
+}
+
+#profileName, #listOfThesis {
+	margin: 10px;
+	border-bottom: solid 1px gray;
+	padding: 10px;
+	margin-bottom: 5px;
+}
+
+#thesesList {
+	margin-top: 10px;
+	padding: 10px;
+	height: auto;
+}
+#addedTheses {
+	margin-top: 5px;
+	padding: 5px;
+}
+
+#edit, #delete {
+	height: 25px;
+	width: 25px;
+}
+#firstName, #lastName{
+	display: inline-block;
+	width: 290px;
+}
+.first, .last{
+	display: inline-block;
+	width: 240px;
+}
+
+#lastName, .last{
+	margin-left: 12px;
+}
+
+#addauthor {
+	background-color: #028DBA;
+	border: 1px solid #028DBA;
+	color: white;
+	font-family: 'Segoe UI Semilight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	padding: 10px;
+	margin: 0px 20px 10px 205px;
+}
+#buttons {
+	margin-left:393px;
+}
+select {
+	font-size: 14px;
+}
+#panel2-3 {
+	width: 928px;
+}
+
+#addTeacherSelect {
+	max-width: 290px;
+}
+.add, .cancel {
+	width: 125px;
+	margin: 10px;
+	text-align: center;
+}
+
+#addedTheses {
+	margin-top: 20px;
+}
+#sortBy {
+	width: 120px;
+}
+#lat, #sort {
+	display: inline-block;
+}
+#sort {
+	float: right;
+}
+#thesesList {
+	margin-top: 30px;
+}
+th {
+	text-align: left;
+}
+td {
+	width: 150px;
+}
+#smallSpace {
+	width: 50px;
+}
+#tab {
+	text-align: center;
+	margin-left: 115px;
+	border: 1px solid black;
+}
+/*.active {
+	background-color: #420E0E !important;
+	opacity: .5 !important;
+}*/
+#title {
+	overflow: auto !important;
+}
+input {
+	float: left !important;
+}
+
+#formWrap {
+	border: 1px solid black;
+}
+.hidden {
+	height: 30px;
+	margin-top: 80px;
+}
+.wrap {
+	min-height: 100%;
+}
+.clear {
+	clear: both;
+}
+
+.title-bit {
+	font-size: 125%;
+	margin-bottom: 3px;
+}
+
+.abstract-bit {
+	font-size: 15px;
+	line-height: 90%;
+}
+
+.pagination {
+	float: right;
+}
+
+
+.clear {
+	clear: both;
+}
+
+footer {
+	margin-top: 30px;
+}
+
+footer ul a {
+	margin: 0 12px;
+	font-size: 13px;
+	color: white;
+	opacity: .8;
+}
+
+#thesis-info {
+	font-family: 'Segoe UI Semilight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+table {
+	width: 100%;
+}
+
+#browsed-theses a {
+	display: block;
+}
+
+footer p {
+	margin: 0px;
+	font-size: 12px;
+	opacity: .8px;
+}
+.center {
+	text-align: center;
+}
+
+#cloudtag {
+	height: 150px;
+	text-align: center;
+}
+#Login {
+	float: right;	
+}
+.login {
+	margin-top: 290px;
+	margin-right: -80px;
+}
+.login a {
+	color: white;
+	margin: 0 10px;
+}
+
+/*.small-10, .small-2, .small-6, .small-8, .small-4, .small-4 {
+	border: 1px solid black;
+}
+*/
