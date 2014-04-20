@@ -1,0 +1,44 @@
+<header id="top">
+	<div class="row">
+		<div class="small-7 columns collapse">
+			<h1 id="brand" style="font-family: 'Magistral C'">
+				<a href="{% url 'theses_sys:home' %}">
+					<span style="color: #fff">browse</span><span style="color: #B80606">up</span><span style="color: #fff">theses</span> |
+				</a>
+				<small style="color: #C4B1B1">UP Cebu's Online Theses Archive</small>
+			</h1>
+		</div>
+	</div>
+	<div class="right" style="margin-top: -50px;">
+		{% if f_id %}
+			<a href="{% url 'theses_sys:session-theses' %}">My Theses</a>
+			<a href="{% url 'theses_sys:department-theses' dept_id %}">Department Theses</a>
+			<a href="{% url 'theses_sys:create-entry' %}">Add Thesis</a>
+			<a href="{% url 'theses_sys:set-profile' %}">Account Settings</a>
+			<a href="#" data-reveal-id="logoutModal" data-reveal>Log out</a>
+			<div id="logoutModal" class="reveal-modal tiny" data-reveal style="text-align:center">
+				<h4>Do you really want to log out?</h4>
+				<a href="{% url 'theses_sys:logout' %}" class="tiny button radius">Yes</a>
+				<a class="close-reveal-modal">&times;</a>
+			</div>
+		{% else %}
+			<a href="{% url 'theses_sys:login' %}"><em>Faculty</em></a>
+		{% endif %}
+	</div>
+	<style>
+		.right a {
+			color: #ddd;
+			padding: 5px;
+			margin-right: 10px;
+			width: 50px;
+			-webkit-transition: all .2s linear;
+			-moz-transition: all .2s linear;
+			transition: all .2s linear;
+		}
+
+		.right a:hover {
+			border-radius: 3px;
+			background-color: #007095;
+		}
+	</style>
+</header>

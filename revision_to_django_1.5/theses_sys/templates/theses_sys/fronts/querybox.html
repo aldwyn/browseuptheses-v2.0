@@ -1,0 +1,86 @@
+<div class="row">
+	<div class="large-12 medium-12 small-12 columns">
+		<fieldset>
+			<legend>Basic Search</legend>
+			<form action="{% url 'theses_sys:redirect-to-search' %}" method="post" class="row collapse">
+				{% csrf_token %}
+				<div class="small-2 columns">
+					<select name="filter">
+						<option value="all"
+							{% if filter == 'all' %}
+								{{ 'selected' }}
+							{% endif %}
+						>All</option>
+						<option value="title"
+							{% if filter == 'title' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Title</option>
+						<option value="tag"
+							{% if filter == 'tag' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Tag</option>
+						<option value="category"
+							{% if filter == 'category' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Category</option>
+						<option value="researcher"
+							{% if filter == 'researcher' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Researcher</option>
+						<option value="department"
+							{% if filter == 'department' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Department</option>
+						<option value="faculty"
+							{% if filter == 'faculty' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Faculty</option>
+						<option value="year"
+							{% if filter == 'year' %}
+								{{ 'selected' }}
+							{% endif %}
+						>Year</option>
+					</select>
+				</div>
+				<div class="small-8 columns">
+					<input id="q" type="text" name="query" style="font-size: 110%; font-weight: bolder; color: #007095;" placeholder="Search for keywords or scopes" autocomplete="off" onkeyup="updateTypeAhead(q.value)" value="{{ query }}"/>
+					<div id="typeahead-data"></div>
+				</div>
+				<div class="small-2 columns">
+					<input id="jumbo-browse" type="submit" class="postfix small button" value="Browse" />
+				</div>
+			</form>
+		</fieldset>
+	</div>
+</div>
+<script>
+	function updateTypeAhead(q) {
+		$('#typeahead-data div').remove();
+		if (q !== '') {
+			$('#typeahead-data').css('display', 'block');
+			$.ajax({
+				url: 'app/updateTypeAhead.php?q='+q,
+				dataType: 'json',
+				success: function(data) {
+					for (var i = 0; i < data.vector.length; i++) {
+						$('#typeahead-data').append('<div id="ta_data_'+i+'" onclick="transportValue(ta_data_'+i+'.innerHTML)">' +
+							data.vector[i]['val'] + '</div>');
+					}
+				}
+			});
+		} else {
+			$('#typeahead-data').css('display', 'none');
+		}
+	}
+
+	function transportValue(ta_data) {
+		$('#q').val(ta_data);
+		$('#typeahead-data').css('display', 'none');
+	}
+</script>
